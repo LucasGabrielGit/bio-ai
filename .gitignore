@@ -1,0 +1,87 @@
+# ------------------------------
+# 🔧 Dependencies
+# ------------------------------
+node_modules
+.pnp
+.pnp.js
+
+# ------------------------------
+# 🏗️ Build outputs
+# ------------------------------
+dist
+build
+*.tsbuildinfo
+
+# ------------------------------
+# 🌱 Environment variables
+# ------------------------------
+.env
+.env.local
+.env.*.local
+apps/**/.env
+apps/**/.env.local
+packages/**/.env
+packages/**/.env.local
+
+# ------------------------------
+# 💻 IDEs and editors
+# ------------------------------
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ------------------------------
+# 🪵 Logs
+# ------------------------------
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
+.turbo
+turbo
+
+# ------------------------------
+# 🧱 Frameworks e Ferramentas
+# ------------------------------
+# TanStack Router generated
+routeTree.gen.ts
+.tanstack
+.tanstack/*
+
+# Prisma
+prisma/migrations/
+prisma/dev.db
+*.db-journal
+
+# Better-T-Stack
+.alchemy
+
+# ------------------------------
+# 🧪 Testing
+# ------------------------------
+coverage
+.nyc_output
+
+# ------------------------------
+# 📦 Misc
+# ------------------------------
+*.tgz
+.cache
+tmp
+temp
+
+# ------------------------------
+# 🐳 Docker
+# ------------------------------
+docker-compose.override.yml
+*.pid
