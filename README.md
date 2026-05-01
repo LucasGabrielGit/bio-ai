@@ -1,36 +1,58 @@
-# 🚀 Bio AI — Gerador Inteligente de Bios
+# 🚀 AutoBio — Gerador Inteligente de Bios e Perfis
 
-![Banner](https://github.com/seu-usuario/bio-ai/assets/banner.png)
+![Banner](https://github.com/LucasGabrielGit/auto-bio/assets/banner.png)
 
-O **Bio AI** é uma aplicação web moderna que transforma ideias em bios únicas e criativas.  
-Desenvolvido com **React + TypeScript**, ele utiliza **TanStack Router**, **Tailwind CSS** e **ShadCN/UI** para oferecer uma experiência leve, rápida e elegante.
+O **AutoBio** é uma plataforma SaaS moderna que transforma ideias em biografias únicas e criativas, oferecendo páginas de perfil personalizáveis, bonitas e prontas para uso.
+Desenvolvido com foco em experiência do usuário, ele utiliza Inteligência Artificial para gerar conteúdos dinâmicos, hospedagem de imagens em nuvem e templates altamente customizáveis.
+
+---
+
+## ✨ Principais Funcionalidades e Estatísticas
+
+- **🪄 Geração por IA**: Textos gerados de forma inteligente e contextualizada.
+- **🎨 Templates Exclusivos**: Múltiplos temas interativos (Profissional, Tecnológico, Criativo, Divertido e Neutro).
+- **🖌️ Personalização Avançada**: Cores dinâmicas (`bio.theme`), upload de avatares com recorte automático e design responsivo.
+- **🔗 Agregador de Links**: Adicione e gerencie todas as suas redes sociais em um só lugar.
+- **💳 Assinaturas Premium**: Integração robusta via Stripe para planos pagos e recursos exclusivos.
+- **🔐 Autenticação Segura**: Controle de acesso completo e rotas protegidas.
 
 ---
 
 ## 🧩 Tecnologias Utilizadas
 
-### Backend (`apps/server`)
-- [Fastify](https://fastify.dev/) — servidor HTTP performático
-- [Prisma ORM](https://www.prisma.io/) — modelagem e acesso ao banco
-- [Zod](https://zod.dev/) — validação de schemas
-- [JWT](https://jwt.io/) — autenticação segura
-- [OpenAI API](https://platform.openai.com/) — geração de bios via IA
+### 🛠️ Arquitetura
+- **[Turborepo](https://turbo.build/)** — Gerenciamento de Monorepo rápido e eficiente.
+- **[Bun](https://bun.sh/)** — Runtime e gerenciador de pacotes ultra-rápido.
 
-### Frontend (`apps/web`)
-- [React 18](https://react.dev/)
-- [Vite](https://vitejs.dev/)
-- [TanStack Router](https://tanstack.com/router)
-- [TailwindCSS](https://tailwindcss.com/)
-- [shadcn/ui](https://ui.shadcn.com/) — componentes acessíveis e modernos
+### 💻 Backend (`apps/server`)
+- **[Fastify](https://fastify.dev/)** — Servidor HTTP de altíssima performance.
+- **[Prisma ORM](https://www.prisma.io/)** — Modelagem e acesso ao banco de dados.
+- **[Google Gemini API](https://ai.google.dev/)** — Motor de geração de texto por Inteligência Artificial.
+- **[Cloudinary](https://cloudinary.com/)** — Upload via streaming, armazenamento e entrega rápida de imagens.
+- **[Stripe](https://stripe.com/br)** — Processamento de pagamentos, assinaturas e webhooks.
+- **[Zod](https://zod.dev/)** & **[JWT](https://jwt.io/)** — Validação rigorosa de dados e autenticação de usuários.
+
+### 📱 Frontend (`apps/web`)
+- **[React 18](https://react.dev/)** + **[Vite](https://vitejs.dev/)**
+- **[TanStack Router](https://tanstack.com/router)** — Roteamento avançado, seguro (type-safe) e performático.
+- **[TanStack Query](https://tanstack.com/query)** — Gerenciamento de estado assíncrono, hooks e cache.
+- **[Tailwind CSS](https://tailwindcss.com/)** + **[Framer Motion](https://www.framer.com/motion/)** — Estilização moderna e animações fluidas baseadas em física.
+- **[shadcn/ui](https://ui.shadcn.com/)** — Biblioteca de componentes acessíveis, customizáveis e com excelente UI/UX.
+- **[React Hook Form](https://react-hook-form.com/)** — Formulários complexos otimizados com suporte a validações flexíveis.
 
 ---
 
 ## 🧠 Conceito do Projeto
 
-O **Bio AI** tem como objetivo simplificar a criação de bios personalizadas e criativas para redes sociais, portfólios ou currículos.  
-Com apenas alguns cliques, o usuário pode gerar textos originais que refletem seu estilo e personalidade.
+O **AutoBio** tem como objetivo simplificar a criação de páginas de perfil unificadas (no formato *link-in-bio*) para profissionais, influenciadores, criadores de conteúdo e empresas.
+Com apenas alguns cliques, o usuário pode:
+1. Gerar um texto de apresentação original.
+2. Escolher um layout impactante.
+3. Ajustar sua paleta de cores.
+4. Fazer upload de uma foto de perfil.
+5. Compartilhar sua **URL pública** personalizada com o mundo.
 
-> “Transforme suas ideias em bios que se destacam.”
+> “Sua presença online, centralizada, bonita e potencializada por Inteligência Artificial.”
 
 ---
 
@@ -39,123 +61,52 @@ Com apenas alguns cliques, o usuário pode gerar textos originais que refletem s
 ### 1️⃣ Clone o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/bio-ai.git
-cd bio-ai
+git clone https://github.com/LucasGabrielGit/auto-bio.git
+cd auto-bio
 ```
 
-### 2️⃣ Instale as dependências
+### 2️⃣ Instale as dependências (via Bun)
 ```bash
-npm install
+bun install
 ```
 
-### 3️⃣ Execute o projeto
+### 3️⃣ Configure as Variáveis de Ambiente
+Renomeie os arquivos de exemplo para `.env` nos respectivos pacotes (`apps/server`, `apps/web`) e preencha as variáveis de ambiente necessárias:
+- `DATABASE_URL` (Conexão com o banco via Prisma)
+- `GEMINI_API_KEY` (Chave de API do Google Gemini)
+- `CLOUDINARY_URL` (URL de conexão ao Cloudinary)
+- `STRIPE_SECRET_KEY` & `STRIPE_WEBHOOK_SECRET` (Credenciais Stripe)
+- Segredos para a geração do Token JWT
+
+### 4️⃣ Execute o projeto
 ```bash
-npm run dev
+bun dev
 ```
 
-O app estará disponível em:
-```bash
-http://localhost:3000
-```
+Isso iniciará o Turborepo em modo de desenvolvimento paralelo. O frontend geralmente roda na porta `5173` e a API na porta `3333`.
 
-### 📦 Scripts Disponíveis
+### 📦 Principais Scripts (`package.json` raiz)
 
-| Comando           | Função                               |
-| ----------------- | ------------------------------------ |
-| `npm run dev`     | Inicia o servidor de desenvolvimento |
-| `npm run build`   | Gera o build de produção             |
-| `npm run preview` | Executa o build localmente           |
-| `npm run lint`    | Analisa e corrige problemas de lint  |
-| `npm run format`  | Formata o código (Prettier)          |
+| Comando         | Função                               |
+| --------------- | ------------------------------------ |
+| `bun dev`       | Inicia o ambiente de desenvolvimento completo |
+| `bun run build` | Gera o build de produção dos apps    |
+| `bun run lint`  | Analisa o código com ESLint          |
 
-### 🧩 Rotas Principais
+---
 
-| Rota               | Descrição                                     |
-| ------------------ | --------------------------------------------- |
-| `/`                | Redireciona automaticamente para `/home`      |
-| `/home`            | Página inicial com apresentação da ferramenta |
-| `/login`           | Tela de autenticação                          |
-| `/register`        | Cadastro de novos usuários                    |
-| `/planos`          | Exibição dos planos disponíveis               |
-| `/admin/dashboard` | Painel de controle (acesso restrito)          |
+## 🎨 Design e Layout
 
-### 🧠 Geração de Bios (API)
+O design segue um padrão atual e minimalista inspirado nos principais produtos SaaS:
+- Suporte nativo a **Modo Claro e Escuro (Dark/Light mode)**.
+- **Efeitos de Glassmorphism** (fundos com desfoque) em modais e painéis de ação.
+- Sistema de **Temas Personalizados**, injetando cores selecionadas pelo usuário diretamente nos templates (`bio.theme`).
+- Micro-interações e **animações elásticas suaves**, como o surgimento de modais, menus dropdown e navegação entre abas via `framer-motion`.
 
-Endpoint: POST /bio/save
+---
 
-Exemplo de Requisição:
-```json
-{
-  "title": "User Example Bio",
-  "style": "profissional",
-  "links": [
-    "https://linkedin.com/in/user-example",
-    "https://github.com/user-example"
-  ]
-}
-```
+## 🧾 Licença
 
-Resposta:
-```json
-{
-  "content": "**User Example Bio**\n\n🌟 Profissional de Marketing Digital..."
-}
-```
+Este projeto é distribuído sob a licença **MIT**. Você é livre para usá-lo, modificá-lo e redistribuí-lo, desde que mantenha os créditos originais.
 
-### 🎨 Design e Layout
-
-O design segue um padrão minimalista e moderno, inspirado em soluções SaaS.
-O layout utiliza:
-
-- Gradientes suaves com fundo escuro (modo dark padrão)
-
-- Cards com bordas arredondadas e sombras sutis
-
-- Tipografia clara e bem espaçada
-
-- Ilustrações vetoriais no estilo 3D minimal flat
-
-### 🔒 Autenticação
-
-A autenticação é gerenciada por um contexto (AuthProvider), que controla:
-
-Sessão e token do usuário
-
-Proteção de rotas privadas (via TanStack Router)
-
-Persistência no localStorage
-
-### 🧱 Componentes Chave
-
-Header — menu superior com logotipo e navegação
-
-LoginForm — formulário de acesso estilizado
-
-PlanosCard — visualização dos planos do serviço
-
-Loader — componente global de carregamento
-
-### 🧑‍💻 Desenvolvimento
-
-O projeto foi desenvolvido com foco em:
-
-Arquitetura modular e componentizada
-
-Padrões de tipagem forte (TypeScript)
-
-Rotas baseadas em arquivos (TanStack Router)
-
-Integração fluida entre layouts e contexto global
-
-### 🧾 Licença
-
-Este projeto é distribuído sob a licença MIT.
-Você é livre para usá-lo, modificá-lo e redistribuí-lo, desde que mantenha os créditos originais.
-
-### ⭐ Se este projeto te ajudou, considere deixar uma estrela no repositório!
-
-```bash
-git add README.md
-git commit -m "docs: add complete project README"
-git push origin main
-```
+⭐ **Se o AutoBio ajudou você a aprender ou acelerou seus projetos, considere deixar uma estrela no repositório!**
