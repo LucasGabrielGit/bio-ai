@@ -194,10 +194,12 @@ const DefaultTemplate = ({
                     }
                   : {};
 
+                const apiBaseUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
                 return (
                   <a
                     key={link.id}
-                    href={link.url}
+                    href={`${apiBaseUrl}/bios/click/${bio.id}/${link.id}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`flex items-center p-4 text-white rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg ${

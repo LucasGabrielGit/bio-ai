@@ -141,7 +141,7 @@ export const TemplateProfissional = ({ bio }: TemplateProfissionalProps) => {
                             {bio.links.map((link) => (
                                 <a
                                     key={link.id}
-                                    href={link.url}
+                                    href={`${import.meta.env.VITE_API_URL || "http://localhost:3000"}/bios/click/${bio.id}/${link.id}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className={`group flex items-center p-4 border rounded-lg transition-all duration-300 hover:shadow-md ${bio.theme ? 'bg-white/5 border-white/20 hover:bg-white/10' : 'bg-slate-50 hover:bg-slate-100 border-slate-200 hover:border-slate-300'}`}

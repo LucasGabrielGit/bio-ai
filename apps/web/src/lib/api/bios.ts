@@ -44,10 +44,28 @@ export interface BioAnalytics {
       domain: string
       count: number
     }>
+    linkClicks: Record<string, number>
   }
   chartData: Array<{
     date: string
     views: number
+  }>
+}
+
+export interface GlobalAnalyticsData {
+  summary: {
+    totalBios: number
+    totalViews: number
+    totalClicks: number
+    avgCTR: number
+  }
+  bios: Array<{
+    id: string
+    title: string
+    slug: string
+    views: number
+    clicks: number
+    ctr: number
   }>
 }
 
@@ -111,6 +129,11 @@ export const biosApi = {
     
     const url = `/bios/analytics/${slug}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`
     const response = await apiClient.get(url)
+    return response.data
+  },
+
+  getGlobalAnalytics: async (): Promise<GlobalAnalyticsData> => {
+    const response = await apiClient.get('/bios/analytics/all')
     return response.data
   },
 
@@ -181,6 +204,14 @@ export const useBioAnalytics = (slug: string, params?: { startDate?: string; end
     queryFn: () => biosApi.getAnalytics(slug, params),
     enabled: !!slug,
     staleTime: 5 * 60 * 1000, // 5 minutos
+  })
+}
+
+export const useGlobalAnalytics = () => {
+  return useQuery({
+    queryKey: ['global-analytics'],
+    queryFn: biosApi.getGlobalAnalytics,
+    staleTime: 5 * 60 * 1000,
   })
 }
 

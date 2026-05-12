@@ -13,6 +13,7 @@ import { copyToClipboard, getBioUrl, useBios, useDeleteBio } from '@/lib/api/bio
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
 import {
+  BarChart3,
   Calendar,
   Copy,
   Edit,
@@ -305,6 +306,12 @@ function MinhasBiosComponent() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem asChild>
+                        <Link to="/admin/bios/detalhes/$publicUrl" params={{ publicUrl: bio.publicUrl }}>
+                          <BarChart3 className="mr-2 h-4 w-4" />
+                          Detalhes
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
                         <Link to={`/admin/bios/editar/$publicUrl`} params={{ publicUrl: bio.publicUrl }}>
                           <Edit className="mr-2 h-4 w-4" />
                           Editar
@@ -366,10 +373,10 @@ function MinhasBiosComponent() {
                 </div>
 
                 <div className="flex space-x-2">
-                  <Button size="sm" variant="outline" className="flex-1" asChild>
-                    <Link to={`/admin/bios/editar/$publicUrl`} params={{ publicUrl: bio.publicUrl }}>
-                      <Edit className="mr-1 h-3 w-3" />
-                      Editar
+                  <Button size="sm" className="flex-1 bg-linear-to-r from-primary to-purple-600" asChild>
+                    <Link to="/admin/bios/detalhes/$publicUrl" params={{ publicUrl: bio.publicUrl }}>
+                      <Eye className="mr-1 h-3 w-3" />
+                      Ver Detalhes
                     </Link>
                   </Button>
                   <Button size="sm" variant="outline" className="flex-1">

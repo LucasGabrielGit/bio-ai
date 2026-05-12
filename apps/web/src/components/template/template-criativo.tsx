@@ -304,7 +304,7 @@ export const TemplateCriativo = ({ bio }: TemplateCriativoProps) => {
               {bio.links.map((link, index) => (
                 <motion.a
                   key={link.id}
-                  href={link.url}
+                  href={`${import.meta.env.VITE_API_URL || "http://localhost:3000"}/bios/click/${bio.id}/${link.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   initial={{ opacity: 0, scale: 0.8, rotate: -5 }}

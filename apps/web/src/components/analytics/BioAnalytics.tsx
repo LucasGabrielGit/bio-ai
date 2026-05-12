@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { useBioAnalytics } from '@/lib/api/bios'
-import { Eye, Users, ExternalLink, TrendingUp } from 'lucide-react'
+import { Eye, Users, ExternalLink, TrendingUp, MousePointerClick } from 'lucide-react'
+import { useBioAnalytics, useBio } from '@/lib/api/bios'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { format, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -12,8 +12,11 @@ interface BioAnalyticsProps {
 
 export function BioAnalytics({ publicUrl }: BioAnalyticsProps) {
   const { dateRange, setDateRange, getQueryParams } = useDateRange(30)
-  const { data: analytics, isLoading, error } = useBioAnalytics(publicUrl, getQueryParams())
-  console.log(analytics)
+  const { data: analytics, isLoading: isAnalyticsLoading, error: analyticsError } = useBioAnalytics(publicUrl, getQueryParams())
+  const { data: bio, isLoading: isBioLoading } = useBio(publicUrl)
+
+  const isLoading = isAnalyticsLoading || isBioLoading
+
   if (isLoading) {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -34,7 +37,7 @@ export function BioAnalytics({ publicUrl }: BioAnalyticsProps) {
     )
   }
 
-  if (error || !analytics) {
+  if (analyticsError || !analytics) {
     return (
       <Card>
         <CardContent className="pt-6">
@@ -45,6 +48,8 @@ export function BioAnalytics({ publicUrl }: BioAnalyticsProps) {
       </Card>
     )
   }
+
+  const totalClicks = Object.values(analytics.stats.linkClicks || {}).reduce((a, b) => a + b, 0)
 
   const chartData = analytics.chartData.map(item => ({
     ...item,
@@ -107,15 +112,13 @@ export function BioAnalytics({ publicUrl }: BioAnalyticsProps) {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Principal Origem</CardTitle>
-            <ExternalLink className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Cliques em Links</CardTitle>
+            <MousePointerClick className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {analytics.stats.topReferrers[0]?.domain || 'Direto'}
-            </div>
+            <div className="text-2xl font-bold">{totalClicks.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
-              {analytics.stats.topReferrers[0]?.count || 0} visualizações
+              {dateRange.label}
             </p>
           </CardContent>
         </Card>
@@ -152,6 +155,46 @@ export function BioAnalytics({ publicUrl }: BioAnalyticsProps) {
           </div>
         </CardContent>
       </Card>
+
+      {/* Cliques por Link */}
+      {bio && bio.links && bio.links.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Desempenho por Link</CardTitle>
+            <CardDescription>
+              Cliques em cada link no período selecionado
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {bio.links.map((link) => {
+                const clicks = analytics.stats.linkClicks?.[link.id] || 0
+                const percentage = totalClicks > 0 ? (clicks / totalClicks) * 100 : 0
+
+                return (
+                  <div key={link.id} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <span className="font-medium">{link.label}</span>
+                        <span className="text-xs text-muted-foreground">({link.platform})</span>
+                      </div>
+                      <div className="text-sm font-bold">
+                        {clicks} clique{clicks === 1 ? '' : 's'}
+                      </div>
+                    </div>
+                    <div className="w-full bg-secondary rounded-full h-2">
+                      <div
+                        className="bg-primary h-2 rounded-full transition-all"
+                        style={{ width: `${percentage}%` }}
+                      />
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Top Referrers */}
       {analytics.stats.topReferrers.length > 0 && (

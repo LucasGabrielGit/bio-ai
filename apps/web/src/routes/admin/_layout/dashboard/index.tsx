@@ -174,9 +174,9 @@ function RouteComponent() {
                     </div>
 
                     <div className="flex space-x-2">
-                      <Button size="sm" variant="outline" className="flex-1" onClick={() => navigate({ to: `/admin/bios/editar/$publicUrl`, params: { publicUrl: bio.publicUrl } })}>
-                        <Edit className="mr-1 h-3 w-3" />
-                        Editar
+                      <Button size="sm" variant="default" className="flex-1 bg-linear-to-r from-primary to-purple-600" onClick={() => navigate({ to: `/admin/bios/detalhes/$publicUrl`, params: { publicUrl: bio.publicUrl } })}>
+                        <Eye className="mr-1 h-3 w-3" />
+                        Detalhes
                       </Button>
                       <Button size="sm" variant="outline" className="flex-1">
                         <Share2 className="mr-1 h-3 w-3" />
@@ -228,7 +228,7 @@ function RouteComponent() {
           </CardHeader>
           <CardContent>
             <Button variant="outline" asChild className="w-full">
-              <Link to="/admin/dashboard">
+              <Link to="/admin/analytics">
                 Ver Relatórios
               </Link>
             </Button>

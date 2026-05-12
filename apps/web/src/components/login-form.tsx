@@ -11,10 +11,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
 const loginSchema = z.object({
-  email: z
-    .string()
-    .min(1, "E-mail é obrigatório")
-    .email("E-mail inválido"),
+  email: z.string().email("E-mail inválido"),
   password: z
     .string()
     .min(1, "Senha é obrigatória")
@@ -47,7 +44,9 @@ export function LoginForm() {
     try {
       await login(data);
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || "Erro ao fazer login. Verifique suas credenciais.";
+      const errorMessage =
+        error.response?.data?.message ||
+        "Erro ao fazer login. Verifique suas credenciais.";
       toast.error(errorMessage);
       console.error("Erro no login:", error);
     } finally {
@@ -67,8 +66,9 @@ export function LoginForm() {
             type="email"
             autoComplete="email"
             placeholder="Digite seu e-mail"
-            className={`h-12 bg-gray-100 border-gray-200 focus:bg-white focus:border-blue-500 ${errors.email ? "border-red-500 focus:border-red-500" : ""
-              }`}
+            className={`dark:text-slate-800 h-12 dark:bg-gray-200 bg-gray-100 border-gray-200 focus:bg-white focus:border-blue-500 ${
+              errors.email ? "border-red-500 focus:border-red-500" : ""
+            }`}
             {...register("email")}
           />
           {errors.email && (
@@ -85,8 +85,9 @@ export function LoginForm() {
               id="password"
               type={showPassword ? "text" : "password"}
               placeholder="Digite sua senha"
-              className={`h-12 bg-gray-100 border-gray-200 focus:bg-white focus:border-blue-500 pr-10 ${errors.password ? "border-red-500 focus:border-red-500" : ""
-                }`}
+              className={`text-slate-800 dark:text-slate-800 h-12 dark:bg-gray-200 bg-gray-100 border-gray-200 focus:bg-white focus:border-blue-500 pr-10 ${
+                errors.password ? "border-red-500 focus:border-red-500" : ""
+              }`}
               {...register("password")}
             />
             <button
@@ -94,14 +95,21 @@ export function LoginForm() {
               onClick={toggleShowPassword}
               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
             >
-              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              {showPassword ? (
+                <EyeOff className="w-5 h-5" />
+              ) : (
+                <Eye className="w-5 h-5" />
+              )}
             </button>
           </div>
           {errors.password && (
             <p className="text-sm text-red-600">{errors.password.message}</p>
           )}
           <div className="flex justify-end">
-            <Link to="/recuperar-senha" className="text-base text-blue-600 hover:underline">
+            <Link
+              to="/recuperar-senha"
+              className="text-base text-blue-600 hover:underline"
+            >
               Esqueceu a senha?
             </Link>
           </div>
@@ -124,11 +132,14 @@ export function LoginForm() {
 
         <span className="text-sm text-gray-600">
           Ainda não tem uma conta?{" "}
-          <Link to="/registro" className="text-blue-600 font-medium hover:underline">
+          <Link
+            to="/registro"
+            className="text-blue-600 font-medium hover:underline"
+          >
             Cadastre-se
           </Link>
         </span>
       </form>
     </div>
-  )
+  );
 }

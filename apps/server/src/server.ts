@@ -73,14 +73,14 @@ async function bootstrap() {
 
     await app.register(fastifySensible);
 
-    // Plugin para upload de arquivos
+    
     await app.register(fastifyMultipart, {
       limits: {
-        fileSize: 5 * 1024 * 1024, // 5MB
+        fileSize: 5 * 1024 * 1024, 
       },
     });
 
-    // Plugin para servir arquivos estáticos
+    
     await app.register(fastifyStatic, {
       root: path.join(__dirname, "..", "public"),
       prefix: "/public/",

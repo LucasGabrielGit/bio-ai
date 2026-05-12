@@ -23,6 +23,7 @@ import {
   Heart,
   BarChart3,
   Settings,
+  Share2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -56,6 +57,7 @@ import apiClient from "@/lib/api/client";
 import { BioAnalytics } from "@/components/analytics/BioAnalytics";
 import { AvatarUpload } from "@/components/AvatarUpload";
 import { ThemeCustomizer } from "@/components/ThemeCustomizer";
+import { QRCodeGenerator } from "@/components/QRCodeGenerator";
 import { createFileRoute } from "@tanstack/react-router";
 import Markdown from "react-markdown";
 
@@ -456,7 +458,7 @@ function EditarBioComponent() {
         onValueChange={setActiveTab}
         className="space-y-6 mt-3"
       >
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger
             value="configuracoes"
             className="flex items-center space-x-2"
@@ -478,7 +480,23 @@ function EditarBioComponent() {
             <BarChart3 className="h-4 w-4" />
             <span>Analytics</span>
           </TabsTrigger>
+          <TabsTrigger
+            value="compartilhar"
+            className="flex items-center space-x-2"
+          >
+            <Share2 className="h-4 w-4" />
+            <span>Compartilhar</span>
+          </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="compartilhar" className="space-y-6">
+          <div className="max-w-md mx-auto">
+            <QRCodeGenerator 
+              url={`${window.location.origin}/bio/${bio.publicUrl}`} 
+              title={bio.title} 
+            />
+          </div>
+        </TabsContent>
 
         <TabsContent value="configuracoes" className="space-y-0">
           <div className="grid gap-6 lg:grid-cols-3">
