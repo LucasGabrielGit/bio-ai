@@ -9,7 +9,7 @@ import {
   type GenerateContentType,
 } from "../../shcemas/bio-schema";
 import { openai } from "../../utils/openai";
-import { generateWithGemini } from "../../utils/gemini";
+import { generateWithGemini, fileToGenerativePart } from "../../utils/gemini";
 import { v2 as cloudinary } from "cloudinary";
 
 export class BioController {
@@ -335,7 +335,7 @@ export class BioController {
         startDate.setDate(startDate.getDate() - 30);
       }
 
-      const [recentViews, viewsByDay] = await Promise.all([
+      const [recentViews, viewsByDay, linkClicks] = await Promise.all([
         db.bioView.findMany({
           where: {
             bioId: bio.id,
@@ -359,6 +359,15 @@ export class BioController {
                     GROUP BY DATE("createdAt")
                     ORDER BY date ASC
                 `,
+        db.linkClick.findMany({
+          where: {
+            bioId: bio.id,
+            createdAt: {
+              gte: startDate,
+              lte: endDate,
+            },
+          },
+        }),
       ]);
 
       const totalViews = bio.views;
@@ -389,6 +398,15 @@ export class BioController {
         .slice(0, 5)
         .map(([domain, count]) => ({ domain, count }));
 
+      // Processar cliques por link
+      const linkClickCounts = linkClicks.reduce(
+        (acc, click) => {
+          acc[click.linkId] = (acc[click.linkId] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
+
       return res.send({
         bio: {
           id: bio.id,
@@ -407,12 +425,53 @@ export class BioController {
           recentViews: recentViewsCount,
           uniqueVisitors: uniqueIps,
           topReferrers,
+          linkClicks: linkClickCounts,
         },
         chartData: viewsByDay,
       });
     } catch (error) {
       console.error("Analytics error:", error);
       return res.status(500).send({ message: "Erro ao buscar analytics" });
+    }
+  }
+
+  async trackClick(
+    req: FastifyRequest<{ Params: { bioId: string; linkId: string } }>,
+    res: FastifyReply,
+  ) {
+    try {
+      const { bioId, linkId } = req.params;
+
+      const bio = await db.bio.findUnique({
+        where: { id: bioId },
+      });
+
+      if (!bio) {
+        return res.status(404).send({ message: "Bio não encontrada" });
+      }
+
+      // Encontrar a URL de destino
+      const links = bio.links as any[];
+      const targetLink = links.find((l) => l.id === linkId);
+
+      if (!targetLink) {
+        return res.status(404).send({ message: "Link não encontrado" });
+      }
+
+      // Registrar o clique de forma assíncrona para não atrasar o redirecionamento
+      db.linkClick
+        .create({
+          data: {
+            bioId,
+            linkId,
+          },
+        })
+        .catch((err) => console.error("Erro ao registrar clique:", err));
+
+      return res.redirect(targetLink.url);
+    } catch (error) {
+      console.error("Track click error:", error);
+      return res.status(500).send({ message: "Erro ao processar clique" });
     }
   }
 
@@ -538,6 +597,51 @@ export class BioController {
       console.error("Theme update error:", error);
       return res.status(500).send({
         message: "Erro ao atualizar tema",
+        error: error?.message,
+      });
+    }
+  }
+
+  async getUserAnalytics(req: FastifyRequest, res: FastifyReply) {
+    try {
+      const bios = await db.bio.findMany({
+        where: { userId: req.user.id },
+        select: {
+          id: true,
+          title: true,
+          publicUrl: true,
+          views: true,
+          _count: {
+            select: { linkClicks: true }
+          }
+        }
+      });
+
+      const totalViews = bios.reduce((acc, bio) => acc + bio.views, 0);
+      const totalClicks = bios.reduce((acc, bio) => acc + bio._count.linkClicks, 0);
+
+      const avgCTR = totalViews > 0 ? (totalClicks / totalViews) * 100 : 0;
+
+      return res.status(200).send({
+        summary: {
+          totalBios: bios.length,
+          totalViews,
+          totalClicks,
+          avgCTR: parseFloat(avgCTR.toFixed(2))
+        },
+        bios: bios.map(bio => ({
+          id: bio.id,
+          title: bio.title,
+          slug: bio.publicUrl,
+          views: bio.views,
+          clicks: bio._count.linkClicks,
+          ctr: bio.views > 0 ? parseFloat(((bio._count.linkClicks / bio.views) * 100).toFixed(2)) : 0
+        }))
+      });
+    } catch (error: any) {
+      console.error("Global analytics error:", error);
+      return res.status(500).send({
+        message: "Erro ao buscar estatísticas globais",
         error: error?.message,
       });
     }

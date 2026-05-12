@@ -9,10 +9,20 @@ export async function bioRoutes(fastify: FastifyInstance) {
         handler: bioController.get,
     })
 
+    fastify.get("/click/:bioId/:linkId", {
+        handler: bioController.trackClick,
+    })
+
     // Rota para analytics de uma bio específica
     fastify.get("/analytics/:slug", {
         preHandler: authMiddleware,
         handler: bioController.getAnalytics,
+    })
+
+    // Rota para analytics global (todas as bios do usuário)
+    fastify.get("/analytics/all", {
+        preHandler: authMiddleware,
+        handler: bioController.getUserAnalytics,
     })
 
     fastify.post("/generate", {
