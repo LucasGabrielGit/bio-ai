@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -31,37 +25,37 @@ model User {
 }
 
 model Subscription {
-  id                   String   @id @default(cuid())
+  id                   String    @id @default(cuid())
   userId               String
-  stripeSubscriptionId String?  @unique
-  stripeSessionId      String?  @unique
+  stripeSubscriptionId String?   @unique
+  stripeSessionId      String?   @unique
   planId               String
-  status               String   @default("pending") // pending, active, cancelled, expired
+  status               String    @default("pending") // pending, active, cancelled, expired
   currentPeriodStart   DateTime?
   currentPeriodEnd     DateTime?
-  cancelAtPeriodEnd    Boolean  @default(false)
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @default(now()) @updatedAt
-  user                 User     @relation(fields: [userId], references: [id])
+  cancelAtPeriodEnd    Boolean   @default(false)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @default(now()) @updatedAt
+  user                 User      @relation(fields: [userId], references: [id])
 }
 
 model Bio {
-  id        String   @id @default(cuid())
-  userId    String
-  title     String
-  content   String
-  style     String   @default("neutro")
-  template  String   @default("minimalista")
-  links     Json     @default("[]")
-  publicUrl String   @unique
-  isPublic  Boolean  @default(false)
-  views     Int      @default(0)
-  avatar    String?  // URL da imagem do avatar
-  theme     Json     @default("{\"primaryColor\": \"#3b82f6\", \"backgroundColor\": \"#ffffff\", \"textColor\": \"#1f2937\"}") // Configurações de tema
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
-  bioViews  BioView[]
+  id         String      @id @default(cuid())
+  userId     String
+  title      String
+  content    String
+  style      String      @default("neutro")
+  template   String      @default("minimalista")
+  links      Json        @default("[]")
+  publicUrl  String      @unique
+  isPublic   Boolean     @default(false)
+  views      Int         @default(0)
+  avatar     String? // URL da imagem do avatar
+  theme      Json        @default("{\"primaryColor\": \"#3b82f6\", \"backgroundColor\": \"#ffffff\", \"textColor\": \"#1f2937\"}") // Configurações de tema
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @default(now()) @updatedAt
+  user       User        @relation(fields: [userId], references: [id])
+  bioViews   BioView[]
   linkClicks LinkClick[]
 }
 

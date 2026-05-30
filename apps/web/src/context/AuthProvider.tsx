@@ -68,6 +68,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 localStorage.removeItem("auth_token")
                 const isProtectedRoute = location.pathname.startsWith('/admin')
                 if (isProtectedRoute) {
+                    sessionStorage.setItem("session_expired", "true")
                     navigate({ to: "/login" })
                 }
             } finally {
@@ -95,7 +96,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 setUser(null)
                 const isProtectedRoute = location.pathname.startsWith('/admin')
                 if (isProtectedRoute) {
-                    toast.error("Você precisa estar logado para acessar esta página!")
+                    sessionStorage.setItem("session_expired", "true")
                     navigate({ to: "/login" })
                 }
             }

@@ -368,13 +368,11 @@ function NovaBioRHFComponent() {
       );
 
       navigate({ to: "/admin/bios" });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao salvar biografia:", error);
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Erro ao salvar biografia. Tente novamente.",
-      );
+      const errorMessage = error.response?.data?.message || 
+        (error instanceof Error ? error.message : "Erro ao salvar biografia. Tente novamente.");
+      toast.error(errorMessage);
     }
   };
 

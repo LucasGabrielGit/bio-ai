@@ -33,7 +33,10 @@ apiClient.interceptors.response.use(
       switch (status) {
         case 401:
           localStorage.removeItem("auth_token");
-          window.location.href = "/login";
+          if (window.location.pathname !== "/login") {
+            sessionStorage.setItem("session_expired", "true");
+            window.location.href = "/login";
+          }
           break;
         case 403:
           console.error("❌ Acesso negado");

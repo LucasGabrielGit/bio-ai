@@ -1,3 +1,4 @@
+import { useAuth } from '@/context/AuthProvider'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -10,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { copyToClipboard, getBioUrl, useBios, useDeleteBio } from '@/lib/api/bios'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
 import {
   BarChart3,
@@ -37,6 +38,12 @@ export const Route = createFileRoute('/admin/_layout/bios/')({
 function MinhasBiosComponent() {
   const { data: bios = [], isLoading, error } = useBios()
   const deleteBioMutation = useDeleteBio()
+  const { user } = useAuth()
+  const navigate = useNavigate()
+
+  const plan = user?.plan || 'free'
+  const bioLimit = plan === 'pro' ? 3 : plan === 'anual' || plan === 'premium' ? 50 : 1
+  const hasReachedLimit = bios.length >= bioLimit
 
   const [searchTerm, setSearchTerm] = useState('')
   const [filterStyle, setFilterStyle] = useState('all')
@@ -143,12 +150,20 @@ function MinhasBiosComponent() {
             Gerencie todas as suas biografias em um só lugar
           </p>
         </div>
-        <Button asChild className="bg-linear-to-r from-primary to-purple-600">
-          <Link to="/admin/bios/nova-rhf">
-            <Plus className="mr-2 h-4 w-4" />
-            Nova Bio
-          </Link>
+
+        <Button className="bg-linear-to-r from-primary to-purple-600" onClick={() => {
+          if (hasReachedLimit) {
+            toast.info(`Você atingiu o limite de ${bioLimit} bio(s) do seu plano ${plan.toUpperCase()}. Faça upgrade para criar mais.`)
+            return;
+          }
+          navigate({
+            to: '/admin/bios/nova-rhf'
+          })
+        }}>
+          <Plus className="mr-2 h-4 w-4" />
+          Nova Bio
         </Button>
+
       </motion.div>
 
       <motion.div
