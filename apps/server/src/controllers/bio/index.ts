@@ -9,7 +9,7 @@ import {
   type GenerateContentType,
 } from "../../shcemas/bio-schema";
 import { openai } from "../../utils/openai";
-import { generateWithGemini, fileToGenerativePart } from "../../utils/gemini";
+import { generateWithGemini } from "../../utils/gemini";
 import { v2 as cloudinary } from "cloudinary";
 
 export class BioController {
@@ -19,6 +19,29 @@ export class BioController {
   ) {
     try {
       const data = createBioSchema.parse(req.body);
+
+      const user = await db.user.findUnique({
+        where: { id: req.user.id },
+        select: { plan: true, _count: { select: { bios: true } } },
+      });
+
+      if (!user) {
+        return res.status(404).send({ message: "Usuário não encontrado" });
+      }
+
+      const bioCount = user._count.bios;
+      const plan = user.plan;
+
+      let limit = 1; // Default for "free"
+      if (plan === "pro") limit = 3; // Let's set 3 for Pro to be more balanced, or 5 as suggested. Let's use 3.
+      if (plan === "anual" || plan === "premium") limit = 50; // Let's set 50 for Premium/Anual
+
+      if (bioCount >= limit) {
+        return res.status(403).send({
+          message: `Limite de bios atingido para o plano ${plan.toUpperCase()}. Por favor, faça um upgrade para criar mais bios.`,
+          code: "LIMIT_REACHED",
+        });
+      }
 
       const publicUrl =
         data.publicUrl ||

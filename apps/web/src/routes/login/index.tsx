@@ -4,7 +4,16 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import logo from "@/lib/assets/images/logo.svg";
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, LockKeyhole } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 
 export const Route = createFileRoute('/login/')({
@@ -12,6 +21,19 @@ export const Route = createFileRoute('/login/')({
 })
 
 function Login() {
+  const [showExpiredModal, setShowExpiredModal] = useState(false);
+
+  useEffect(() => {
+    const expired = sessionStorage.getItem("session_expired");
+    if (expired === "true") {
+      setShowExpiredModal(true);
+      toast.warning("Sua sessão expirou por inatividade. Por favor, faça login novamente.", {
+        duration: 5000,
+      });
+      sessionStorage.removeItem("session_expired");
+    }
+  }, []);
+
   return (
     <div className='flex h-screen'>
       <div className="flex-1 bg-linear-to-br to-slate-900 from-slate-700 relative overflow-hidden">
@@ -114,6 +136,37 @@ function Login() {
           </Card>
         </div>
       </div>
+
+      <Dialog open={showExpiredModal} onOpenChange={setShowExpiredModal}>
+        <DialogContent className="sm:max-w-md border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-2xl rounded-2xl overflow-hidden p-0 gap-0">
+          <div className="relative h-2 bg-gradient-to-r from-amber-500 via-orange-500 to-red-500" />
+          
+          <div className="p-6 flex flex-col items-center text-center">
+            <div className="relative flex items-center justify-center w-16 h-16 rounded-full bg-amber-50 dark:bg-amber-950/30 text-amber-500 mb-4">
+              <div className="absolute inset-0 rounded-full bg-amber-400/20 blur-md animate-pulse"></div>
+              <LockKeyhole className="w-8 h-8 relative z-10 animate-bounce" style={{ animationDuration: '3s' }} />
+            </div>
+
+            <DialogHeader className="space-y-2">
+              <DialogTitle className="text-2xl font-bold text-slate-950 dark:text-slate-50">
+                Sessão Expirada
+              </DialogTitle>
+              <DialogDescription className="text-slate-600 dark:text-slate-400 text-base max-w-xs leading-relaxed">
+                Por motivos de segurança, sua sessão foi encerrada. Por favor, conecte-se novamente para continuar.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="w-full mt-6">
+              <button
+                onClick={() => setShowExpiredModal(false)}
+                className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-indigo-500/30 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 text-sm focus:outline-hidden cursor-pointer"
+              >
+                Fazer Login Agora
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
