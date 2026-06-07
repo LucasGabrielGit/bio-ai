@@ -6,6 +6,7 @@ export interface Bio {
   user: {
     id: string
     name: string
+    plan?: string
   }
   title: string
   content: string
@@ -94,8 +95,9 @@ const mapperBio = (bio: any) => {
   return {
     ...bio,
     user: {
-      id: bio.user.id,
-      name: bio.user.name,
+      id: bio.user?.id,
+      name: bio.user?.name,
+      plan: bio.user?.plan,
     }
   }
 }

@@ -1,5 +1,6 @@
 import { AdminSidebar } from '@/components/admin-sidebar'
 import { ThemeProvider } from '@/components/theme-provider'
+import { TooltipProvider } from '@/components/ui/tooltip'
 import { useAuth } from '@/context/AuthProvider'
 import { createFileRoute, Outlet, useNavigate } from '@tanstack/react-router'
 import { useEffect } from 'react'
@@ -32,14 +33,16 @@ function AdminLayout() {
 
     return (
         <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange storageKey="vite-ui-theme">
-            <div className="flex bg-background">
-                <AdminSidebar className='sticky top-0' />
-                <main className="flex-1 overflow-auto">
-                    <div className="h-full overflow-y-hidden">
-                        <Outlet />
-                    </div>
-                </main>
-            </div>
+            <TooltipProvider>
+                <div className="flex bg-background">
+                    <AdminSidebar className='sticky top-0' />
+                    <main className="flex-1 overflow-auto">
+                        <div className="h-full overflow-y-hidden">
+                            <Outlet />
+                        </div>
+                    </main>
+                </div>
+            </TooltipProvider>
         </ThemeProvider>
     )
 }

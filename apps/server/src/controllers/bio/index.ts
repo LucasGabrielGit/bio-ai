@@ -84,6 +84,15 @@ export class BioController {
     res: FastifyReply,
   ) {
     try {
+      const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+        select: { plan: true },
+      });
+
+      if (user?.plan === "free") {
+        return res.status(403).send({ message: "Plano Free não possui acesso à IA avançada." });
+      }
+
       const data = generateContentSchema.parse(req.body);
       const prompt = `Crie uma bio ${data.style} para redes sociais com o título: ${data.title}. Deve soar natural e atrativa!`;
 
@@ -159,6 +168,7 @@ export class BioController {
             select: {
               id: true,
               name: true,
+              plan: true,
             },
           },
           avatar: true,
