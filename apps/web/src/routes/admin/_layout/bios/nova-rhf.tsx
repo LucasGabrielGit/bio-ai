@@ -71,6 +71,7 @@ import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { bioStyles } from "./editar.$publicUrl";
+import { UpgradeModal } from "@/components/upgrade-modal";
 
 export const Route = createFileRoute("/admin/_layout/bios/nova-rhf")({
   component: NovaBioRHFComponent,
@@ -540,10 +541,10 @@ function NovaBioRHFComponent() {
                                   <HoverCardTrigger asChild>
                                     <div
                                       className={`p-4 border rounded-lg cursor-pointer transition-all hover:shadow-md ${!isAvailable
-                                          ? "opacity-50 cursor-not-allowed border-muted pointer-events-none"
-                                          : watch("template") === template.id
-                                            ? "border-primary bg-primary/5"
-                                            : "border-border hover:border-primary/50"
+                                        ? "opacity-50 cursor-not-allowed border-muted pointer-events-none"
+                                        : watch("template") === template.id
+                                          ? "border-primary bg-primary/5"
+                                          : "border-border hover:border-primary/50"
                                         }`}
                                       onClick={() => {
                                         if (isAvailable) {
@@ -689,8 +690,8 @@ function NovaBioRHFComponent() {
                   <div
                     key={style.value}
                     className={`p-4 border rounded-lg cursor-pointer transition-all hover:shadow-md ${watch("style") === style.value
-                        ? "border-primary bg-primary/5"
-                        : "border-border hover:border-primary/50"
+                      ? "border-primary bg-primary/5"
+                      : "border-border hover:border-primary/50"
                       }`}
                   >
                     <label className="cursor-pointer">
@@ -952,14 +953,12 @@ function NovaBioRHFComponent() {
           </div>
         </div>
       </form>
+      <UpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        featureName="Geração por Inteligência Artificial"
+        description="Assine um de nossos planos e libere o poder da IA avançada para criar biografias persuasivas em segundos."
+      />
     </div>
-  </div>
-  <UpgradeModal
-    isOpen={showUpgradeModal}
-    onClose={() => setShowUpgradeModal(false)}
-    featureName="Geração por Inteligência Artificial"
-    description="Assine um de nossos planos e libere o poder da IA avançada para criar biografias persuasivas em segundos."
-  />
-</div>
-);
+  );
 }
