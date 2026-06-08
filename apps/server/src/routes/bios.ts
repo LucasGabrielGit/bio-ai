@@ -1,5 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import { BioController } from "../controllers/bio";
+import { domainController } from "../controllers/domain";
 import { authMiddleware } from "../middlewares/auth";
 
 export async function bioRoutes(fastify: FastifyInstance) {
@@ -58,9 +59,22 @@ export async function bioRoutes(fastify: FastifyInstance) {
     })
 
     // Rota para atualizar tema
-    fastify.put("/theme/:slug", {
-        preHandler: authMiddleware,
+    fastify.post("/:id/theme", {
+        preHandler: [authMiddleware],
         handler: bioController.updateTheme,
     })
 
+    // Domain routes
+    fastify.post("/:id/domain", {
+        preHandler: [authMiddleware],
+        handler: domainController.add,
+    })
+    fastify.delete("/:id/domain", {
+        preHandler: [authMiddleware],
+        handler: domainController.remove,
+    })
+    fastify.get("/:id/domain/status", {
+        preHandler: [authMiddleware],
+        handler: domainController.check,
+    })
 }

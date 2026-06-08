@@ -899,7 +899,8 @@ function NovaBioRHFComponent() {
             <Button
               type="button"
               onClick={handlePublish}
-              disabled={isSubmitting}
+              disabled={isSubmitting || user?.emailVerified === false}
+              title={user?.emailVerified === false ? "Confirme seu e-mail para publicar" : ""}
               className="bg-linear-to-r from-primary to-purple-600"
             >
               {isSubmitting ? (

@@ -471,7 +471,7 @@ function EditarBioComponent() {
         onValueChange={setActiveTab}
         className="space-y-6 mt-3"
       >
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5 md:grid-cols-5">
           <TabsTrigger
             value="configuracoes"
             className="flex items-center space-x-2"
@@ -497,8 +497,15 @@ function EditarBioComponent() {
             value="compartilhar"
             className="flex items-center space-x-2"
           >
-            <Share2 className="h-4 w-4" />
+            <Share2 className="h-4 w-4 hidden md:block" />
             <span>Compartilhar</span>
+          </TabsTrigger>
+          <TabsTrigger
+            value="avancado"
+            className="flex items-center space-x-2"
+          >
+            <Crown className="h-4 w-4 hidden md:block text-yellow-500" />
+            <span>Avançado</span>
           </TabsTrigger>
         </TabsList>
 
@@ -842,7 +849,8 @@ function EditarBioComponent() {
                       onClick={handleSubmit((data) =>
                         onSubmit({ ...data, isPublic: true }),
                       )}
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || user?.emailVerified === false}
+                      title={user?.emailVerified === false ? "Confirme seu e-mail para publicar" : ""}
                       className="bg-linear-to-r from-primary to-purple-600"
                     >
                       {isSubmitting ? (
@@ -976,6 +984,82 @@ function EditarBioComponent() {
 
         <TabsContent value="analytics" className="space-y-0">
           <BioAnalytics publicUrl={publicUrl} />
+        </TabsContent>
+
+        <TabsContent value="avancado" className="space-y-6">
+          <Card className="border-yellow-500/20 shadow-md">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Globe className="h-5 w-5 text-primary" />
+                Domínio Personalizado
+              </CardTitle>
+              <CardDescription>
+                Use seu próprio domínio (ex: meunome.com.br) para acessar esta bio.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {user?.plan !== "PRO" && user?.plan !== "premium" && user?.plan !== "anual" ? (
+                <div className="bg-yellow-50 dark:bg-yellow-900/10 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800 text-sm">
+                  <p className="font-semibold text-yellow-800 dark:text-yellow-500 flex items-center gap-2 mb-2">
+                    <Crown className="h-4 w-4" />
+                    Recurso Premium
+                  </p>
+                  <p className="text-yellow-700 dark:text-yellow-400 mb-4">
+                    Faça upgrade para o plano Pro ou Anual para vincular um domínio próprio a esta biografia.
+                  </p>
+                  <Button asChild variant="outline" className="border-yellow-500 text-yellow-700 hover:bg-yellow-100">
+                    <Link to="/admin/configuracoes">Fazer Upgrade</Link>
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {bio?.customDomain ? (
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800 rounded-lg">
+                        <Check className="h-5 w-5 text-green-600 dark:text-green-500" />
+                        <div>
+                          <p className="font-medium text-green-800 dark:text-green-500">Domínio vinculado: {bio.customDomain}</p>
+                          <p className="text-xs text-green-600 dark:text-green-400">Lembre-se de configurar o apontamento DNS.</p>
+                        </div>
+                      </div>
+                      <div className="bg-muted p-4 rounded-lg space-y-2 text-sm">
+                        <p className="font-medium">Configuração de DNS necessária:</p>
+                        <p>No seu provedor de domínio (Registro.br, GoDaddy, etc), crie um registro CNAME:</p>
+                        <code className="block bg-background p-2 rounded border">
+                          Tipo: CNAME <br/>
+                          Nome/Host: @ (ou www) <br/>
+                          Valor: cname.vercel-dns.com.
+                        </code>
+                      </div>
+                      <Button variant="destructive" onClick={() => {
+                        apiClient.delete(`/bio/${bio.id}/domain`).then(() => {
+                          toast.success("Domínio removido");
+                          queryClient.invalidateQueries({ queryKey: ["bio", publicUrl] });
+                        }).catch(() => toast.error("Erro ao remover domínio"));
+                      }}>Remover Domínio</Button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <div className="flex-1 space-y-2">
+                        <Label>Seu domínio</Label>
+                        <Input id="domain" placeholder="ex: meunome.com.br" />
+                      </div>
+                      <div className="flex items-end">
+                        <Button onClick={() => {
+                          const domain = (document.getElementById("domain") as HTMLInputElement).value;
+                          if (!domain) return toast.error("Insira um domínio válido");
+                          apiClient.post(`/bio/${bio?.id}/domain`, { domain }).then(() => {
+                            toast.success("Domínio adicionado!");
+                            queryClient.invalidateQueries({ queryKey: ["bio", publicUrl] });
+                          }).catch((e) => toast.error(e.response?.data?.message || "Erro ao adicionar domínio"));
+                        }}>Vincular Domínio</Button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
 
