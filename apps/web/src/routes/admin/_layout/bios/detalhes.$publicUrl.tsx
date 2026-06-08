@@ -3,12 +3,12 @@ import { useBio, getBioUrl, copyToClipboard } from '@/lib/api/bios'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { 
-  Edit3, 
-  ExternalLink, 
-  Copy, 
-  Calendar, 
-  Eye, 
+import {
+  Edit3,
+  ExternalLink,
+  Copy,
+  Calendar,
+  Eye,
   ArrowLeft,
   Share2,
   Globe,
@@ -28,6 +28,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { useState } from 'react'
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
+import { Spinner } from '@/components/ui/spinner'
 
 export const Route = createFileRoute('/admin/_layout/bios/detalhes/$publicUrl')({
   component: BioDetailsPage,
@@ -39,7 +41,17 @@ function BioDetailsPage() {
   const { data: bio, isLoading, error } = useBio(publicUrl)
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
 
-  if (isLoading) return <div className="p-8 text-center">Carregando detalhes...</div>
+  if (isLoading) return <Empty className='w-full'>
+    <EmptyHeader>
+      <EmptyMedia>
+        <Spinner />
+      </EmptyMedia>
+      <EmptyTitle>Carregando...</EmptyTitle>
+      <EmptyDescription>
+        Buscando informações da sua biografia...
+      </EmptyDescription>
+    </EmptyHeader>
+  </Empty>
   if (error || !bio) return <div className="p-8 text-center text-destructive">Erro ao carregar biografia.</div>
 
   const fullUrl = getBioUrl(bio.publicUrl)
@@ -54,9 +66,9 @@ function BioDetailsPage() {
       {/* Header com Ações */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => navigate({ to: '/admin/bios' })}
             className="hover:bg-accent rounded-full"
           >
@@ -197,7 +209,7 @@ function BioDetailsPage() {
                   <div className="h-full bg-primary rounded-full" style={{ width: '65%' }} />
                 </div>
               </div>
-              
+
               <div className="pt-4 border-t space-y-4">
                 <div className="flex items-center gap-3 p-3 rounded-xl bg-primary/5 border border-primary/10">
                   <div className="p-2 bg-primary/10 rounded-lg">
@@ -225,12 +237,12 @@ function BioDetailsPage() {
 
       {/* Floating Action Button (FAB) */}
       <Button
-        className="fixed bottom-8 right-4 h-14 w-14 rounded-full shadow-2xl hover:scale-110 transition-transform bg-linear-to-r from-primary to-purple-600 border-0 group z-50"
+        className="fixed bottom-8 right-8 h-14 w-14 rounded-full shadow-2xl hover:scale-110 transition-transform bg-linear-to-r from-primary to-purple-600 border-0 group z-50"
         size="icon"
         onClick={() => navigate({ to: `/admin/bios/editar/$publicUrl`, params: { publicUrl: bio.publicUrl } })}
       >
         <Edit3 className="h-6 w-6 text-white group-hover:rotate-12 transition-transform" />
-        <span className="absolute right-16 bg-card border px-3 py-1.5 rounded-lg text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-sm pointer-events-none">
+        <span className="absolute right-16 bg-card border px-3 py-1.5 rounded-lg text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-sm pointer-events-none top-2 z-50 text-white">
           Editar Biografia
         </span>
       </Button>

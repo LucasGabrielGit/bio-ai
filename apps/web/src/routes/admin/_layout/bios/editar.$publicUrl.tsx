@@ -60,6 +60,9 @@ import { ThemeCustomizer } from "@/components/ThemeCustomizer";
 import { QRCodeGenerator } from "@/components/QRCodeGenerator";
 import { createFileRoute } from "@tanstack/react-router";
 import Markdown from "react-markdown";
+import { BioTemplate } from "@/components/template/template";
+import { useAuth } from "@/context/AuthProvider";
+import { UpgradeModal } from "@/components/upgrade-modal";
 
 export const Route = createFileRoute("/admin/_layout/bios/editar/$publicUrl")({
   component: EditarBioComponent,
@@ -118,6 +121,7 @@ export const bioStyles = [
 function EditarBioComponent() {
   const { publicUrl } = Route.useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { data: bio, isLoading, error } = useBio(publicUrl);
   const updateBioMutation = useUpdateBio();
   const generateContentMutation = useGenerateContent();
@@ -263,7 +267,16 @@ function EditarBioComponent() {
     append(newLink);
   };
 
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
   const generateWithAI = async () => {
+    // Check if user exists in query data and if plan is free
+    // Actually we need to get user from useAuth
+    if (user?.plan === "free") {
+      setShowUpgradeModal(true);
+      return;
+    }
+
     const title = watch("title");
     const style = watch("style");
 
@@ -458,7 +471,7 @@ function EditarBioComponent() {
         onValueChange={setActiveTab}
         className="space-y-6 mt-3"
       >
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5 md:grid-cols-5">
           <TabsTrigger
             value="configuracoes"
             className="flex items-center space-x-2"
@@ -484,8 +497,15 @@ function EditarBioComponent() {
             value="compartilhar"
             className="flex items-center space-x-2"
           >
-            <Share2 className="h-4 w-4" />
+            <Share2 className="h-4 w-4 hidden md:block" />
             <span>Compartilhar</span>
+          </TabsTrigger>
+          <TabsTrigger
+            value="avancado"
+            className="flex items-center space-x-2"
+          >
+            <Crown className="h-4 w-4 hidden md:block text-yellow-500" />
+            <span>Avançado</span>
           </TabsTrigger>
         </TabsList>
 
@@ -709,8 +729,9 @@ function EditarBioComponent() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       {fields.map((field, index) => {
+                        const currentPlatform = watch(`links.${index}.platform`) || field.platform;
                         const selectedTemplate = linksTemplates.find(
-                          (t) => t.platform === field.platform,
+                          (t) => t.platform === currentPlatform,
                         );
                         return (
                           <div
@@ -719,7 +740,7 @@ function EditarBioComponent() {
                           >
                             <div>
                               <Select
-                                value={field.platform}
+                                value={currentPlatform}
                                 onValueChange={(value) => {
                                   const template = linksTemplates.find(
                                     (t) => t.platform === value,
@@ -828,7 +849,8 @@ function EditarBioComponent() {
                       onClick={handleSubmit((data) =>
                         onSubmit({ ...data, isPublic: true }),
                       )}
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || user?.emailVerified === false}
+                      title={user?.emailVerified === false ? "Confirme seu e-mail para publicar" : ""}
                       className="bg-linear-to-r from-primary to-purple-600"
                     >
                       {isSubmitting ? (
@@ -848,65 +870,46 @@ function EditarBioComponent() {
               </form>
             </div>
 
-            <div className="space-y-6 sticky top-12 right-0">
+            <div className="space-y-6 sticky top-12 right-0 hidden lg:block">
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.5 }}
+                className="flex justify-center"
               >
-                <Card className="sticky top-12">
-                  <CardHeader>
-                    <CardTitle className="flex items-center space-x-2">
-                      <Globe className="h-5 w-5" />
-                      <span>Preview</span>
-                    </CardTitle>
-                    <CardDescription>Veja como sua bio ficará</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="p-4 bg-muted/50 rounded-lg">
-                      <h3 className="font-bold text-lg mb-2">
-                        {watch("title") || "Título da Bio"}
-                      </h3>
-                      <div className="text-sm text-muted-foreground mb-3">
-                        <Markdown>
-                          {watch("content") ||
-                            "Conteúdo da biografia aparecerá aqui..."}
-                        </Markdown>
-                      </div>
-                      {watch("style") && (
-                        <Badge variant="outline" className="text-xs">
-                          {
-                            bioStyles.find((s) => s.value === watch("style"))
-                              ?.label
-                          }
-                        </Badge>
-                      )}
+                <div className="relative w-[320px] h-[650px] rounded-[3rem] border-[8px] border-gray-900 bg-gray-900 shadow-2xl overflow-hidden ring-4 ring-gray-900/20">
+                  {/* Notch Simples */}
+                  <div className="absolute top-0 inset-x-0 h-6 bg-gray-900 rounded-b-3xl w-40 mx-auto z-50 flex justify-center items-center">
+                    <div className="w-12 h-1.5 bg-gray-800 rounded-full"></div>
+                  </div>
+                  
+                  {/* Conteúdo do Preview */}
+                  <div className="w-full h-full overflow-y-auto bg-background [&_.min-h-screen]:min-h-full custom-scrollbar-hide relative pointer-events-none">
+                    <div className="absolute inset-0 origin-top pointer-events-auto">
+                      <BioTemplate 
+                        bio={{
+                          id: bio?.id || "preview-id",
+                          user: bio?.user || { id: "u1", name: "Você" },
+                          title: watch("title") || "Seu Título",
+                          content: watch("content") || "Sua biografia aparecerá aqui...",
+                          style: (watch("style") as any) || "profissional",
+                          template: watch("template") || "minimalista",
+                          links: watch("links") as any || [],
+                          publicUrl: watch("publicUrl") || "preview",
+                          isPublic: watch("isPublic") || false,
+                          views: bio?.views || 0,
+                          avatar: pendingAvatar !== null ? (pendingAvatar.preview || undefined) : bio?.avatar,
+                          theme: pendingTheme || bio?.theme,
+                          createdAt: bio?.createdAt || new Date().toISOString(),
+                          updatedAt: bio?.updatedAt || new Date().toISOString(),
+                        }} 
+                        isLoading={false} 
+                        error={null} 
+                        isPreview={true}
+                      />
                     </div>
-
-                    {fields.length > 0 && (
-                      <div className="space-y-2">
-                        <h4 className="font-medium text-sm">Links:</h4>
-                        {fields
-                          .filter(
-                            (_, index) =>
-                              watch(`links.${index}.label`) &&
-                              watch(`links.${index}.url`),
-                          )
-                          .map((field, index) => (
-                            <div
-                              key={field.id}
-                              className="flex items-center space-x-2 text-sm"
-                            >
-                              <LinkIcon className="h-3 w-3" />
-                              <span className="text-muted-foreground">
-                                {watch(`links.${index}.label`)}
-                              </span>
-                            </div>
-                          ))}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               </motion.div>
             </div>
           </div>
@@ -982,7 +985,90 @@ function EditarBioComponent() {
         <TabsContent value="analytics" className="space-y-0">
           <BioAnalytics publicUrl={publicUrl} />
         </TabsContent>
+
+        <TabsContent value="avancado" className="space-y-6">
+          <Card className="border-yellow-500/20 shadow-md">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Globe className="h-5 w-5 text-primary" />
+                Domínio Personalizado
+              </CardTitle>
+              <CardDescription>
+                Use seu próprio domínio (ex: meunome.com.br) para acessar esta bio.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {user?.plan !== "PRO" && user?.plan !== "premium" && user?.plan !== "anual" ? (
+                <div className="bg-yellow-50 dark:bg-yellow-900/10 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800 text-sm">
+                  <p className="font-semibold text-yellow-800 dark:text-yellow-500 flex items-center gap-2 mb-2">
+                    <Crown className="h-4 w-4" />
+                    Recurso Premium
+                  </p>
+                  <p className="text-yellow-700 dark:text-yellow-400 mb-4">
+                    Faça upgrade para o plano Pro ou Anual para vincular um domínio próprio a esta biografia.
+                  </p>
+                  <Button asChild variant="outline" className="border-yellow-500 text-yellow-700 hover:bg-yellow-100">
+                    <Link to="/admin/configuracoes">Fazer Upgrade</Link>
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {bio?.customDomain ? (
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800 rounded-lg">
+                        <Check className="h-5 w-5 text-green-600 dark:text-green-500" />
+                        <div>
+                          <p className="font-medium text-green-800 dark:text-green-500">Domínio vinculado: {bio.customDomain}</p>
+                          <p className="text-xs text-green-600 dark:text-green-400">Lembre-se de configurar o apontamento DNS.</p>
+                        </div>
+                      </div>
+                      <div className="bg-muted p-4 rounded-lg space-y-2 text-sm">
+                        <p className="font-medium">Configuração de DNS necessária:</p>
+                        <p>No seu provedor de domínio (Registro.br, GoDaddy, etc), crie um registro CNAME:</p>
+                        <code className="block bg-background p-2 rounded border">
+                          Tipo: CNAME <br/>
+                          Nome/Host: @ (ou www) <br/>
+                          Valor: cname.vercel-dns.com.
+                        </code>
+                      </div>
+                      <Button variant="destructive" onClick={() => {
+                        apiClient.delete(`/bio/${bio.id}/domain`).then(() => {
+                          toast.success("Domínio removido");
+                          queryClient.invalidateQueries({ queryKey: ["bio", publicUrl] });
+                        }).catch(() => toast.error("Erro ao remover domínio"));
+                      }}>Remover Domínio</Button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <div className="flex-1 space-y-2">
+                        <Label>Seu domínio</Label>
+                        <Input id="domain" placeholder="ex: meunome.com.br" />
+                      </div>
+                      <div className="flex items-end">
+                        <Button onClick={() => {
+                          const domain = (document.getElementById("domain") as HTMLInputElement).value;
+                          if (!domain) return toast.error("Insira um domínio válido");
+                          apiClient.post(`/bio/${bio?.id}/domain`, { domain }).then(() => {
+                            toast.success("Domínio adicionado!");
+                            queryClient.invalidateQueries({ queryKey: ["bio", publicUrl] });
+                          }).catch((e) => toast.error(e.response?.data?.message || "Erro ao adicionar domínio"));
+                        }}>Vincular Domínio</Button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
+
+      <UpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        featureName="Geração por Inteligência Artificial"
+        description="Assine um de nossos planos e libere o poder da IA avançada para criar biografias persuasivas em segundos."
+      />
     </div>
   );
 }

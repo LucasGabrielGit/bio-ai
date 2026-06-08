@@ -20,6 +20,7 @@ import {
 import { useBios } from '@/lib/api/bios'
 import { useNavigate } from '@tanstack/react-router'
 import { ModeToggle } from '@/components/mode-toggle'
+import { useAuth } from '@/context/AuthProvider'
 
 export const Route = createFileRoute('/admin/_layout/dashboard/')({
   component: RouteComponent,
@@ -28,6 +29,7 @@ export const Route = createFileRoute('/admin/_layout/dashboard/')({
 function RouteComponent() {
   const { data: bios = [] } = useBios()
   const navigate = useNavigate()
+  const { user } = useAuth()
 
   const recentBios = bios
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
@@ -92,9 +94,19 @@ function RouteComponent() {
             <Eye className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {bios.reduce((acc, bio) => acc + bio.views, 0).toLocaleString()}
-            </div>
+            {user?.plan === 'free' ? (
+              <div className="flex flex-col space-y-1">
+                <div className="text-2xl font-bold text-muted-foreground/50 blur-[2px]">999</div>
+                <Link to="/admin/configuracoes" className="text-xs text-primary hover:underline font-medium flex items-center">
+                  <Sparkles className="w-3 h-3 mr-1" />
+                  Assine para ver
+                </Link>
+              </div>
+            ) : (
+              <div className="text-2xl font-bold">
+                {bios.reduce((acc, bio) => acc + bio.views, 0).toLocaleString()}
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -104,10 +116,22 @@ function RouteComponent() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">892</div>
-            <p className="text-xs text-muted-foreground">
-              +12% desde ontem
-            </p>
+            {user?.plan === 'free' ? (
+              <div className="flex flex-col space-y-1">
+                <div className="text-2xl font-bold text-muted-foreground/50 blur-[2px]">999</div>
+                <Link to="/admin/configuracoes" className="text-xs text-primary hover:underline font-medium flex items-center">
+                  <Sparkles className="w-3 h-3 mr-1" />
+                  Assine para ver
+                </Link>
+              </div>
+            ) : (
+              <>
+                <div className="text-2xl font-bold">892</div>
+                <p className="text-xs text-muted-foreground">
+                  +12% desde ontem
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
       </motion.div>

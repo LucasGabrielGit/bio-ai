@@ -29,6 +29,17 @@ export const loginUserSchema = z.object({
     password: z.string(),
 })
 
+export const forgotPasswordSchema = z.object({
+    email: z.string().email("E-mail inválido"),
+})
+
+export const resetPasswordSchema = z.object({
+    token: z.string().min(1, "Token obrigatório"),
+    newPassword: z.string().min(8, "A senha deve ter no mínimo 8 caracteres"),
+})
+
 export type CreateUserType = z.infer<typeof createUserSchema>
 export type LoginUserType = z.infer<typeof loginUserSchema>
 export type UpdateUserType = z.infer<typeof updateUserSchema>
+export type ForgotPasswordType = z.infer<typeof forgotPasswordSchema>
+export type ResetPasswordType = z.infer<typeof resetPasswordSchema>

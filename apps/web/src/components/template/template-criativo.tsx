@@ -1,27 +1,22 @@
 import type { Bio } from "@/lib/api/bios";
 import { motion } from "framer-motion";
 import {
-  Brush,
-  Camera,
   ExternalLink,
-  Facebook,
   Github,
-  Globe,
-  Heart,
+  Twitter,
   Instagram,
+  Facebook,
+  Youtube,
   Linkedin,
   Mail,
   MapPin,
-  Palette,
-  Rainbow,
+  Camera,
+  Globe,
   Sparkles,
-  Star,
-  Twitter,
-  Youtube,
-  Zap,
 } from "lucide-react";
-import type { JSX } from "react";
 import ReactMarkdown from "react-markdown";
+import type { JSX } from "react";
+import { EmbedWidget, isEmbeddable } from "./LinkWidget";
 
 type TemplateCriativoProps = {
   bio: Bio;
@@ -30,18 +25,18 @@ type TemplateCriativoProps = {
 export const TemplateCriativo = ({ bio }: TemplateCriativoProps) => {
   const getPlatformIcon = (label: string) => {
     const iconMap: Record<string, JSX.Element> = {
-      github: <Github className="w-5 h-5" />,
-      twitter: <Twitter className="w-5 h-5" />,
-      instagram: <Instagram className="w-5 h-5" />,
-      facebook: <Facebook className="w-5 h-5" />,
-      youtube: <Youtube className="w-5 h-5" />,
-      linkedin: <Linkedin className="w-5 h-5" />,
-      email: <Mail className="w-5 h-5" />,
-      website: <Globe className="w-5 h-5" />,
-      portfolio: <Camera className="w-5 h-5" />,
-      other: <MapPin className="w-5 h-5" />,
+      github: <Github className="w-8 h-8" />,
+      twitter: <Twitter className="w-8 h-8" />,
+      instagram: <Instagram className="w-8 h-8" />,
+      facebook: <Facebook className="w-8 h-8" />,
+      youtube: <Youtube className="w-8 h-8" />,
+      linkedin: <Linkedin className="w-8 h-8" />,
+      email: <Mail className="w-8 h-8" />,
+      website: <Globe className="w-8 h-8" />,
+      portfolio: <Camera className="w-8 h-8" />,
+      other: <MapPin className="w-8 h-8" />,
     };
-    return iconMap[label.toLowerCase()] || <Globe className="w-5 h-5" />;
+    return iconMap[label.toLowerCase()] || <Globe className="w-8 h-8" />;
   };
 
   const customStyles = bio.theme
@@ -54,345 +49,129 @@ export const TemplateCriativo = ({ bio }: TemplateCriativoProps) => {
   const primaryColorStyle = bio.theme
     ? {
         backgroundColor: bio.theme.primaryColor,
-        borderColor: bio.theme.primaryColor,
-        color: "#ffffff",
       }
-    : {};
-
-  const primaryTextStyle = bio.theme
-    ? {
-        color: bio.theme.primaryColor,
-      }
-    : {};
+    : { backgroundColor: "#c084fc" }; // purple-400
 
   return (
     <div
-      className={`min-h-screen ${bio.theme ? "" : "bg-linear-to-br from-pink-100 via-purple-50 to-indigo-100"} relative overflow-hidden`}
+      className={`min-h-screen p-4 md:p-8 overflow-x-hidden ${bio.theme ? "" : "bg-linear-to-br from-fuchsia-100 via-purple-100 to-indigo-100 text-slate-800"}`}
       style={customStyles}
     >
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          animate={{
-            rotate: 360,
-            x: [0, 100, 0],
-            y: [0, -50, 0],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-          className="absolute top-20 left-10 w-20 h-20 bg-linear-to-br from-pink-400 to-purple-500 rounded-full opacity-20"
-        />
-        <motion.div
-          animate={{
-            rotate: -360,
-            x: [0, -80, 0],
-            y: [0, 60, 0],
-          }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-          className="absolute top-1/3 right-20 w-16 h-16 bg-linear-to-br from-cyan-400 to-blue-500 rounded-full opacity-20"
-        />
-        <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, 180, 360],
-          }}
-          transition={{
-            duration: 15,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="absolute bottom-32 left-1/4 w-12 h-12 bg-linear-to-br from-yellow-400 to-orange-500 rounded-full opacity-25"
-        />
-      </div>
-
-      <div className="container mx-auto px-4 py-12 max-w-5xl relative z-10">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
-          className="relative mb-12"
-        >
-          <div
-            className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden border-4"
-            style={
-              bio.theme
-                ? { borderColor: bio.theme.primaryColor }
-                : { borderColor: "#d8b4fe" }
-            }
-          >
-            <div
-              className={`px-8 py-12 text-white relative ${bio.theme ? "" : "bg-linear-to-r from-pink-500 via-purple-500 to-indigo-500"}`}
-              style={
-                bio.theme ? { backgroundColor: bio.theme.primaryColor } : {}
-              }
-            >
-              <div className="absolute top-4 right-4">
-                <Sparkles className="w-6 h-6 text-yellow-300 animate-pulse" />
-              </div>
-              <div className="absolute bottom-4 left-4">
-                <Star
-                  className={`w-5 h-5 animate-bounce ${bio.theme ? "" : "text-pink-200"}`}
-                />
-              </div>
-
-              <div className="flex items-center space-x-6">
-                <motion.div
-                  animate={{ rotate: [0, 10, -10, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="relative"
-                >
-                  {bio.avatar ? (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.5, delay: 0.2 }}
-                      className="relative"
-                    >
-                      <img
-                        src={bio.avatar}
-                        alt={`Avatar de ${bio.title}`}
-                        className="w-24 h-24 rounded-full object-cover border-4 border-white/30 backdrop-blur-sm"
-                      />
-                      <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center">
-                        <Zap className="w-3 h-3 text-yellow-800" />
-                      </div>
-                    </motion.div>
-                  ) : (
-                    <>
-                      <div className="bg-white/20 p-4 rounded-full backdrop-blur-sm">
-                        <Palette className="w-8 h-8" />
-                      </div>
-                      <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center">
-                        <Zap className="w-3 h-3 text-yellow-800" />
-                      </div>
-                    </>
-                  )}
-                </motion.div>
-                <div>
-                  <motion.h1
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                    className="text-4xl font-bold mb-2 text-shadow-lg"
-                  >
-                    {bio.title}
-                  </motion.h1>
-                  <motion.div
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.5 }}
-                    className={`flex items-center space-x-4 ${bio.theme ? "opacity-90" : "text-pink-100"}`}
-                  >
-                    <div className="flex items-center space-x-2">
-                      <Brush className="w-4 h-4 text-yellow-300" />
-                      <span>Por {bio.user?.name || "Usuário"}</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Rainbow className="w-4 h-4 text-cyan-300" />
-                      <span>
-                        {new Date(bio.createdAt).toLocaleDateString("pt-BR")}
-                      </span>
-                    </div>
-                  </motion.div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className={`backdrop-blur-sm rounded-3xl shadow-xl p-8 mb-8 border-2 ${bio.theme ? "bg-white/50" : "bg-white/90 border-purple-200"}`}
-          style={bio.theme ? { borderColor: bio.theme.primaryColor } : {}}
-        >
-          <div className="prose prose-lg max-w-none">
-            <div
-              className={`leading-relaxed ${bio.theme ? "" : "text-gray-700"}`}
-              style={{ color: bio.theme ? bio.theme.textColor : undefined }}
-            >
-              <ReactMarkdown
-                components={{
-                  h1: ({ children }) => (
-                    <h1
-                      className={`text-3xl font-bold mb-4 flex items-center ${bio.theme ? "" : "bg-linear-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent"}`}
-                      style={bio.theme ? primaryTextStyle : {}}
-                    >
-                      <Star className="w-6 h-6 text-yellow-500 mr-2" />
-                      {children}
-                    </h1>
-                  ),
-                  h2: ({ children }) => (
-                    <h2
-                      className={`text-2xl font-semibold mb-3 flex items-center ${bio.theme ? "" : "bg-linear-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent"}`}
-                      style={bio.theme ? primaryTextStyle : {}}
-                    >
-                      <Sparkles className="w-5 h-5 text-pink-500 mr-2" />
-                      {children}
-                    </h2>
-                  ),
-                  h3: ({ children }) => (
-                    <h3
-                      className={`text-xl font-medium mb-2 flex items-center ${bio.theme ? "" : "bg-linear-to-r from-indigo-600 to-cyan-600 bg-clip-text text-transparent"}`}
-                      style={bio.theme ? primaryTextStyle : {}}
-                    >
-                      <Zap className="w-4 h-4 text-yellow-500 mr-2" />
-                      {children}
-                    </h3>
-                  ),
-                  p: ({ children }) => (
-                    <p className="mb-4 text-gray-600 leading-relaxed text-lg">
-                      {children}
-                    </p>
-                  ),
-                  ul: ({ children }) => (
-                    <ul className="list-none mb-4 space-y-3">{children}</ul>
-                  ),
-                  li: ({ children }) => (
-                    <li className="text-gray-600 flex items-start">
-                      <span className="text-2xl mr-3">✨</span>
-                      <span className="pt-1">{children}</span>
-                    </li>
-                  ),
-                  strong: ({ children }) => (
-                    <strong
-                      className={`font-bold ${bio.theme ? "" : "bg-linear-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent"}`}
-                      style={bio.theme ? primaryTextStyle : {}}
-                    >
-                      {children}
-                    </strong>
-                  ),
-                }}
-              >
-                {bio.content}
-              </ReactMarkdown>
-            </div>
-          </div>
-        </motion.div>
-
-        {bio.links && bio.links.length > 0 && (
+      <div className="max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6">
+          {/* Header Card (Bento Style) */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className={`backdrop-blur-sm rounded-3xl shadow-xl p-8 mb-8 border-2 ${bio.theme ? "bg-white/20" : "bg-white/90 border-pink-200"}`}
-            style={bio.theme ? { borderColor: bio.theme.primaryColor } : {}}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="md:col-span-8 lg:col-span-9 bg-white/40 backdrop-blur-xl rounded-3xl p-8 shadow-xl border border-white/50 flex flex-col sm:flex-row items-center sm:items-start gap-8"
           >
-            <h2
-              className={`text-3xl font-bold mb-8 flex items-center justify-center ${bio.theme ? "" : "bg-linear-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent"}`}
-              style={bio.theme ? primaryTextStyle : {}}
-            >
-              <Rainbow
-                className="w-8 h-8 mr-3"
-                style={bio.theme ? primaryTextStyle : { color: "#ec4899" }}
+            {bio.avatar ? (
+              <img
+                src={bio.avatar}
+                alt={bio.title}
+                className="w-32 h-32 sm:w-40 sm:h-40 rounded-[2rem] object-cover shadow-lg transform rotate-3"
               />
-              Conecte-se Comigo
-              <Sparkles
-                className="w-6 h-6 ml-3 animate-pulse"
-                style={bio.theme ? primaryTextStyle : { color: "#a855f7" }}
-              />
-            </h2>
+            ) : (
+              <div
+                className="w-32 h-32 sm:w-40 sm:h-40 rounded-[2rem] flex items-center justify-center text-5xl font-bold text-white shadow-lg transform rotate-3"
+                style={primaryColorStyle}
+              >
+                {bio.title.charAt(0)}
+              </div>
+            )}
+            <div className="flex-1 text-center sm:text-left">
+              <h1 className="text-4xl font-extrabold mb-4 bg-clip-text text-transparent bg-linear-to-r from-purple-600 to-pink-500" style={bio.theme ? { color: bio.theme.primaryColor, background: 'none', WebkitTextFillColor: 'initial' } : {}}>
+                {bio.title}
+              </h1>
+              <div className="prose prose-sm sm:prose-base opacity-80 mb-4 max-w-none">
+                <ReactMarkdown>{bio.content}</ReactMarkdown>
+              </div>
+              <p className="inline-block px-4 py-1 rounded-full bg-black/5 text-sm font-semibold tracking-wide">
+                @{bio.user?.name}
+              </p>
+            </div>
+          </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {bio.links.map((link, index) => (
+          {/* Side Info Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="md:col-span-4 lg:col-span-3 bg-white/40 backdrop-blur-xl rounded-3xl p-8 shadow-xl border border-white/50 flex flex-col justify-center items-center text-center relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+            
+            <Sparkles className="w-12 h-12 mb-4 text-purple-500" style={bio.theme ? { color: bio.theme.primaryColor } : {}} />
+            <h3 className="font-bold text-xl mb-2">Criativo</h3>
+            <p className="text-sm opacity-70">Design & Arte</p>
+          </motion.div>
+
+          {/* Embeds Section */}
+          {bio.links && bio.links.filter((l) => isEmbeddable(l.url)).length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="md:col-span-12 w-full flex flex-col gap-4"
+            >
+              {bio.links
+                .filter((l) => isEmbeddable(l.url))
+                .map((link) => (
+                  <div key={`embed-${link.id}`} className="w-full bg-white/20 backdrop-blur-xl rounded-3xl p-2 shadow-xl border border-white/50">
+                    <EmbedWidget url={link.url} />
+                  </div>
+                ))}
+            </motion.div>
+          )}
+
+          {/* Bento Links Grid */}
+          {bio.links && bio.links.filter((l) => !isEmbeddable(l.url)).length > 0 && (
+            bio.links.filter((l) => !isEmbeddable(l.url)).map((link, index) => {
+              const apiBaseUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+              
+              // Crie um padrão visual interessante para o grid
+              const colSpan = index === 0 ? "md:col-span-8" : index === 1 ? "md:col-span-4" : index % 3 === 0 ? "md:col-span-6 lg:col-span-4" : "md:col-span-6 lg:col-span-4";
+              
+              return (
                 <motion.a
                   key={link.id}
-                  href={`${import.meta.env.VITE_API_URL || "http://localhost:3000"}/bios/click/${bio.id}/${link.id}`}
+                  href={`${apiBaseUrl}/bios/click/${bio.id}/${link.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
-                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                  transition={{
-                    duration: 0.5,
-                    delay: index * 0.1,
-                    type: "spring",
-                    bounce: 0.4,
-                  }}
-                  whileHover={{
-                    scale: 1.05,
-                    rotate: 2,
-                    transition: { duration: 0.2 },
-                  }}
-                  className="group relative overflow-hidden"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: 0.1 * index }}
+                  whileHover={{ scale: 1.02, rotate: index % 2 === 0 ? 1 : -1 }}
+                  className={`${colSpan} group relative bg-white/40 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/50 overflow-hidden flex flex-col justify-between min-h-[150px]`}
                 >
-                  <div
-                    className={`absolute inset-0 rounded-2xl ${bio.theme ? "opacity-50" : "bg-linear-to-r from-pink-400 via-purple-500 to-indigo-500"}`}
-                    style={
-                      bio.theme
-                        ? { backgroundColor: bio.theme.primaryColor }
-                        : {}
-                    }
-                  ></div>
-                  <div
-                    className={`relative m-1 rounded-xl p-6 transition-all duration-300 ${bio.theme ? "bg-white/10 group-hover:bg-white/20" : "bg-white group-hover:bg-gray-50"}`}
-                  >
-                    <div className="flex items-center space-x-4">
-                      <div
-                        className={`p-3 text-white rounded-xl transition-all duration-300 shadow-lg ${bio.theme ? "" : "bg-linear-to-br from-pink-500 to-purple-600 group-hover:from-pink-400 group-hover:to-purple-500"}`}
-                        style={bio.theme ? primaryColorStyle : {}}
-                      >
-                        {getPlatformIcon(link.label)}
-                      </div>
-                      <div className="flex-1">
-                        <div className="font-bold text-gray-800 text-lg">
-                          {link.label}
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Star className="w-4 h-4 text-yellow-500 animate-pulse" />
-                        <ExternalLink className="w-5 h-5 text-gray-400 group-hover:text-purple-600 transition-colors" />
-                      </div>
-                    </div>
+                  <div className="absolute -right-6 -top-6 opacity-10 transform group-hover:scale-150 transition-transform duration-500">
+                    {getPlatformIcon(link.label)}
+                  </div>
+                  
+                  <div className="bg-white/50 p-3 rounded-2xl w-fit mb-4 text-purple-600" style={bio.theme ? { color: bio.theme.primaryColor } : {}}>
+                    {getPlatformIcon(link.label)}
+                  </div>
+                  
+                  <div>
+                    <h3 className="font-bold text-xl mb-1">{link.label}</h3>
+                    <p className="text-sm opacity-60 flex items-center gap-2">
+                      {link.platform} <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </p>
                   </div>
                 </motion.a>
-              ))}
-            </div>
-          </motion.div>
-        )}
+              );
+            })
+          )}
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className={`text-center backdrop-blur-sm rounded-3xl shadow-xl p-8 border-2 ${bio.theme ? "bg-white/20" : "bg-white/90 border-indigo-200"}`}
-          style={bio.theme ? { borderColor: bio.theme.primaryColor } : {}}
-        >
-          <motion.div
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="flex items-center justify-center space-x-3 text-gray-600 mb-4"
-          >
-            <Heart className="w-6 h-6 text-red-500" />
-            <span
-              className={`text-lg font-semibold ${bio.theme ? "" : "bg-linear-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent"}`}
-              style={bio.theme ? primaryTextStyle : {}}
-            >
-              Feito com amor no AutoBio
-            </span>
-            <Sparkles className="w-6 h-6 text-yellow-500 animate-pulse" />
-          </motion.div>
-          <p
-            className={`text-gray-500 ${bio.theme ? "opacity-80" : ""}`}
-            style={bio.theme ? { color: bio.theme.textColor } : {}}
-          >
-            Crie sua biografia única em{" "}
-            <a
-              href="/"
-              className={`font-bold transition-all duration-300 ${bio.theme ? "hover:opacity-80" : "bg-linear-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent hover:from-pink-500 hover:to-purple-500"}`}
-              style={bio.theme ? primaryTextStyle : {}}
-            >
-              autobio.app
-            </a>{" "}
-            ✨
-          </p>
-        </motion.div>
+          {/* Footer Card */}
+          {!["pro", "anual", "premium"].includes(bio.user?.plan || "free") && (
+            <div className="md:col-span-12 mt-8 text-center bg-white/30 backdrop-blur-md rounded-full py-3 px-6 mx-auto w-fit border border-white/40 shadow-sm text-sm font-medium">
+              Criado com AutoBio ✨
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

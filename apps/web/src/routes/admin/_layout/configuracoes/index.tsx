@@ -45,7 +45,9 @@ import {
   useVerifyCheckout,
 } from "@/lib/api/payments";
 import { userApi, type UserProfileUpdate } from "@/lib/api/user";
-import { plans } from "@/routes/(public)/_layout/planos";
+import { pricingData } from "@/routes/(public)/_layout/planos";
+
+const plans = [pricingData.free, pricingData.starter, pricingData.pro];
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
@@ -72,6 +74,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
+import { useTheme } from "next-themes"
 
 const profileSchema = z.object({
   name: z.string().min(3, "O nome deve ter no mínimo 3 caracteres"),
@@ -295,7 +298,7 @@ function ConfiguracoesComponent() {
         onError: (error: any) => {
           toast.error(
             "Erro ao iniciar checkout: " +
-              (error?.response?.data?.message || error.message),
+            (error?.response?.data?.message || error.message),
           );
         },
       },
@@ -331,11 +334,10 @@ function ConfiguracoesComponent() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                      activeTab === tab.id
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                    }`}
+                    className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === tab.id
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                      }`}
                   >
                     {tab.icon}
                     <span>{tab.label}</span>
@@ -537,11 +539,11 @@ function ConfiguracoesComponent() {
                                   Valor
                                 </span>
                                 <span className="text-lg font-bold">
-                                  {selectedPlanForCheckout.price}
+                                  {selectedPlanForCheckout.monthlyPrice}
                                   <span className="text-sm font-normal text-muted-foreground">
-                                    {selectedPlanForCheckout.price === "R$0"
+                                    {selectedPlanForCheckout.monthlyPrice === "R$ 0"
                                       ? ""
-                                      : selectedPlanForCheckout.period}
+                                      : "/mês"}
                                   </span>
                                 </span>
                               </div>
@@ -608,13 +610,12 @@ function ConfiguracoesComponent() {
                                   return (
                                     <motion.div
                                       key={plan.name}
-                                      className={`relative bg-card rounded-lg shadow-md border-2 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] ${
-                                        plan.popular
-                                          ? "border-primary ring-2 ring-primary/20"
-                                          : isCurrentPlan
-                                            ? "border-green-500 ring-2 ring-green-500/20"
-                                            : "border-border hover:border-primary/50"
-                                      }`}
+                                      className={`relative bg-card rounded-lg shadow-md border-2 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] ${plan.popular
+                                        ? "border-primary ring-2 ring-primary/20"
+                                        : isCurrentPlan
+                                          ? "border-green-500 ring-2 ring-green-500/20"
+                                          : "border-border hover:border-primary/50"
+                                        }`}
                                       initial={{ opacity: 0, y: 20 }}
                                       whileInView={{ opacity: 1, y: 0 }}
                                       transition={{
@@ -644,13 +645,12 @@ function ConfiguracoesComponent() {
                                       <div className="p-4 h-full flex flex-col">
                                         <div className="text-center mb-4">
                                           <div
-                                            className={`mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-3 ${
-                                              plan.name === "Free"
-                                                ? "bg-blue-100 text-blue-600"
-                                                : plan.name === "Pro"
-                                                  ? "bg-purple-100 text-purple-600"
-                                                  : "bg-yellow-100 text-yellow-600"
-                                            }`}
+                                            className={`mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-3 ${plan.name === "Free"
+                                              ? "bg-blue-100 text-blue-600"
+                                              : plan.name === "Pro"
+                                                ? "bg-purple-100 text-purple-600"
+                                                : "bg-yellow-100 text-yellow-600"
+                                              }`}
                                           >
                                             {plan.icon}
                                           </div>
@@ -662,12 +662,12 @@ function ConfiguracoesComponent() {
                                           </p>
                                           <div className="flex items-baseline justify-center gap-1">
                                             <span className="text-2xl font-bold text-foreground">
-                                              {plan.price}
+                                              {plan.monthlyPrice}
                                             </span>
                                             <span className="text-xs text-muted-foreground">
-                                              {plan.price === "R$0"
+                                              {plan.monthlyPrice === "R$ 0"
                                                 ? null
-                                                : plan.period}
+                                                : "/mês"}
                                             </span>
                                           </div>
                                         </div>
@@ -735,13 +735,12 @@ function ConfiguracoesComponent() {
                                         </div>
 
                                         <Button
-                                          className={`w-full ${
-                                            isCurrentPlan
-                                              ? "bg-green-500 hover:bg-green-600 text-white"
-                                              : plan.popular
-                                                ? "bg-linear-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white shadow-lg"
-                                                : ""
-                                          }`}
+                                          className={`w-full ${isCurrentPlan
+                                            ? "bg-green-500 hover:bg-green-600 text-white"
+                                            : plan.popular
+                                              ? "bg-linear-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white shadow-lg"
+                                              : ""
+                                            }`}
                                           variant={
                                             isCurrentPlan
                                               ? "default"

@@ -1,24 +1,14 @@
+import { BioTemplate } from "@/components/template/template";
+import { TemplatePreview } from "@/components/template/templates";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -32,50 +22,56 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { generateSlug, useCreateBio, generateContent } from "@/lib/api/bios";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
-  ArrowLeft,
-  Briefcase,
-  Eye,
-  FileText,
-  Globe,
-  Info,
-  Link as LinkIcon,
-  Palette,
-  Plus,
-  Save,
-  Sparkles,
-  Trash2,
-  User,
-  Wand2,
-  Github,
-  Twitter,
-  Instagram,
-  Facebook,
-  Youtube,
-  Linkedin,
-  Mail,
-  MapPin,
-  Heart,
-  Camera,
-  Layout,
-  Zap,
-  Crown,
-} from "lucide-react";
-import { useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
-import { toast } from "sonner";
-import { Separator } from "@/components/ui/separator";
-import Markdown from "react-markdown";
-import { bioStyles } from "./editar.$publicUrl";
-import { useAuth } from "@/context/AuthProvider";
-import { TemplatePreview } from "@/components/template/templates";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useAuth } from "@/context/AuthProvider";
+import { generateContent, generateSlug, useCreateBio } from "@/lib/api/bios";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import {
+  ArrowLeft,
+  Briefcase,
+  Camera,
+  Crown,
+  Facebook,
+  FileText,
+  Github,
+  Globe,
+  Heart,
+  Instagram,
+  Layout,
+  Linkedin,
+  Link as LinkIcon,
+  Mail,
+  Palette,
+  Plus,
+  Save,
+  Sparkles,
+  Trash2,
+  Twitter,
+  User,
+  Wand2,
+  Youtube,
+  Zap
+} from "lucide-react";
+import { useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { bioStyles } from "./editar.$publicUrl";
+import { UpgradeModal } from "@/components/upgrade-modal";
 
 export const Route = createFileRoute("/admin/_layout/bios/nova-rhf")({
   component: NovaBioRHFComponent,
@@ -148,20 +144,12 @@ function NovaBioRHFComponent() {
       planRequired: "free",
     },
     {
-      id: "criativo-artistico",
-      name: "Criativo Artístico",
-      description: "Para artistas e criativos",
-      icon: <Palette className="h-4 w-4" />,
-      preview: "Design vibrante com galeria de trabalhos e portfólio",
-      planRequired: "free",
-    },
-    {
       id: "tech-developer",
       name: "Tech Developer",
       description: "Para desenvolvedores e profissionais de tech",
       icon: <Globe className="h-4 w-4" />,
       preview: "Template moderno com seções para projetos e tecnologias",
-      planRequired: ["pro", "anual"],
+      planRequired: "free",
     },
     {
       id: "influencer-social",
@@ -169,7 +157,7 @@ function NovaBioRHFComponent() {
       description: "Para influenciadores e criadores de conteúdo",
       icon: <Sparkles className="h-4 w-4" />,
       preview: "Layout dinâmico com destaque para redes sociais e métricas",
-      planRequired: ["pro", "anual"],
+      planRequired: ["pro", "anual", "premium"],
     },
     {
       id: "empreendedor-startup",
@@ -177,23 +165,15 @@ function NovaBioRHFComponent() {
       description: "Para empreendedores e fundadores",
       icon: <Zap className="h-4 w-4" />,
       preview: "Template inovador com seções para empresa e visão",
-      planRequired: ["pro", "anual"],
+      planRequired: ["pro", "anual", "premium"],
     },
     {
-      id: "consultor-especialista",
-      name: "Consultor Especialista",
-      description: "Para consultores e especialistas",
-      icon: <User className="h-4 w-4" />,
-      preview: "Layout profissional com foco em expertise e depoimentos",
-      planRequired: "anual",
-    },
-    {
-      id: "educador-mentor",
-      name: "Educador & Mentor",
-      description: "Para educadores e mentores",
-      icon: <FileText className="h-4 w-4" />,
-      preview: "Template educacional com seções para cursos e mentorias",
-      planRequired: "anual",
+      id: "criativo-artistico",
+      name: "Criativo Artístico",
+      description: "Para artistas e criativos",
+      icon: <Palette className="h-4 w-4" />,
+      preview: "Design vibrante com galeria de trabalhos e portfólio",
+      planRequired: ["pro", "anual", "premium"],
     },
     {
       id: "freelancer-multiplo",
@@ -201,7 +181,23 @@ function NovaBioRHFComponent() {
       description: "Para freelancers com múltiplas habilidades",
       icon: <Plus className="h-4 w-4" />,
       preview: "Layout versátil com seções para diferentes serviços",
-      planRequired: ["pro", "anual"],
+      planRequired: ["pro", "anual", "premium"],
+    },
+    {
+      id: "consultor-especialista",
+      name: "Consultor Especialista",
+      description: "Para consultores e especialistas",
+      icon: <User className="h-4 w-4" />,
+      preview: "Layout profissional com foco em expertise e depoimentos",
+      planRequired: ["anual", "premium"],
+    },
+    {
+      id: "educador-mentor",
+      name: "Educador & Mentor",
+      description: "Para educadores e mentores",
+      icon: <FileText className="h-4 w-4" />,
+      preview: "Template educacional com seções para cursos e mentorias",
+      planRequired: ["anual", "premium"],
     },
     {
       id: "premium-luxury",
@@ -209,7 +205,7 @@ function NovaBioRHFComponent() {
       description: "Template exclusivo com design sofisticado",
       icon: <Sparkles className="h-4 w-4" />,
       preview: "Design luxuoso com animações e elementos premium",
-      planRequired: "anual",
+      planRequired: ["anual", "premium"],
     },
   ];
 
@@ -313,7 +309,14 @@ function NovaBioRHFComponent() {
     append(newLink);
   };
 
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
   const generateWithAI = async () => {
+    if (user?.plan === "free") {
+      setShowUpgradeModal(true);
+      return;
+    }
+
     const title = watch("title");
     const style = watch("style");
 
@@ -370,7 +373,7 @@ function NovaBioRHFComponent() {
       navigate({ to: "/admin/bios" });
     } catch (error: any) {
       console.error("Erro ao salvar biografia:", error);
-      const errorMessage = error.response?.data?.message || 
+      const errorMessage = error.response?.data?.message ||
         (error instanceof Error ? error.message : "Erro ao salvar biografia. Tente novamente.");
       toast.error(errorMessage);
     }
@@ -537,13 +540,12 @@ function NovaBioRHFComponent() {
                                 <TooltipTrigger>
                                   <HoverCardTrigger asChild>
                                     <div
-                                      className={`p-4 border rounded-lg cursor-pointer transition-all hover:shadow-md ${
-                                        !isAvailable
-                                          ? "opacity-50 cursor-not-allowed border-muted pointer-events-none"
-                                          : watch("template") === template.id
-                                            ? "border-primary bg-primary/5"
-                                            : "border-border hover:border-primary/50"
-                                      }`}
+                                      className={`p-4 border rounded-lg cursor-pointer transition-all hover:shadow-md ${!isAvailable
+                                        ? "opacity-50 cursor-not-allowed border-muted pointer-events-none"
+                                        : watch("template") === template.id
+                                          ? "border-primary bg-primary/5"
+                                          : "border-border hover:border-primary/50"
+                                        }`}
                                       onClick={() => {
                                         if (isAvailable) {
                                           setValue("template", template.id);
@@ -566,13 +568,13 @@ function NovaBioRHFComponent() {
                                               (template.planRequired.includes(
                                                 "anual",
                                               ) && (
-                                                <Badge
-                                                  variant="secondary"
-                                                  className="text-xs"
-                                                >
-                                                  {typeof template.planRequired ===
-                                                  "string"
-                                                    ? template.planRequired
+                                                  <Badge
+                                                    variant="secondary"
+                                                    className="text-xs"
+                                                  >
+                                                    {typeof template.planRequired ===
+                                                      "string"
+                                                      ? template.planRequired
                                                         .charAt(0)
                                                         .toUpperCase()
                                                         .concat(
@@ -580,11 +582,11 @@ function NovaBioRHFComponent() {
                                                             1,
                                                           ),
                                                         )
-                                                    : template.planRequired.join(
+                                                      : template.planRequired.join(
                                                         ", ",
                                                       )}
-                                                </Badge>
-                                              ))}
+                                                  </Badge>
+                                                ))}
                                           </div>
                                           <p className="text-sm text-muted-foreground">
                                             {template.description}
@@ -600,11 +602,11 @@ function NovaBioRHFComponent() {
                                       Atualize seu plano para{" "}
                                       {typeof template.planRequired === "string"
                                         ? template.planRequired
-                                            .charAt(0)
-                                            .toUpperCase()
-                                            .concat(
-                                              template.planRequired.slice(1),
-                                            )
+                                          .charAt(0)
+                                          .toUpperCase()
+                                          .concat(
+                                            template.planRequired.slice(1),
+                                          )
                                         : template.planRequired.join(", ")}{" "}
                                       para usar este template.
                                     </span>
@@ -687,11 +689,10 @@ function NovaBioRHFComponent() {
                 {bioStyles.map((style) => (
                   <div
                     key={style.value}
-                    className={`p-4 border rounded-lg cursor-pointer transition-all hover:shadow-md ${
-                      watch("style") === style.value
-                        ? "border-primary bg-primary/5"
-                        : "border-border hover:border-primary/50"
-                    }`}
+                    className={`p-4 border rounded-lg cursor-pointer transition-all hover:shadow-md ${watch("style") === style.value
+                      ? "border-primary bg-primary/5"
+                      : "border-border hover:border-primary/50"
+                      }`}
                   >
                     <label className="cursor-pointer">
                       <input
@@ -799,14 +800,15 @@ function NovaBioRHFComponent() {
             </CardHeader>
             <CardContent className="space-y-4">
               {fields.map((field, index) => {
+                const currentPlatform = watch(`links.${index}.platform`) || field.platform;
                 const selectedTemplate = linksTemplates.find(
-                  (t) => t.platform === field.platform,
+                  (t) => t.platform === currentPlatform,
                 );
                 return (
                   <div key={field.id} className="flex space-x-2 items-center">
                     <div>
                       <Select
-                        value={field.platform}
+                        value={currentPlatform}
                         onValueChange={(value) => {
                           const template = linksTemplates.find(
                             (t) => t.platform === value,
@@ -873,105 +875,91 @@ function NovaBioRHFComponent() {
               )}
             </CardContent>
           </Card>
+
+          <div className="flex justify-end space-x-4 mt-6">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleSave}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2" />
+                  Salvando...
+                </>
+              ) : (
+                <>
+                  <Save className="mr-2 h-4 w-4" />
+                  Salvar Rascunho
+                </>
+              )}
+            </Button>
+
+            <Button
+              type="button"
+              onClick={handlePublish}
+              disabled={isSubmitting || user?.emailVerified === false}
+              title={user?.emailVerified === false ? "Confirme seu e-mail para publicar" : ""}
+              className="bg-linear-to-r from-primary to-purple-600"
+            >
+              {isSubmitting ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                  Publicando...
+                </>
+              ) : (
+                <>
+                  <Globe className="mr-2 h-4 w-4" />
+                  Publicar Biografia
+                </>
+              )}
+            </Button>
+          </div>
         </div>
 
-        <div className="space-y-6">
-          <Card className="sticky top-6">
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Eye className="mr-2 h-5 w-5" />
-                Preview
-              </CardTitle>
-              <CardDescription>Veja como sua biografia ficará</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-semibold text-lg">
-                    {watch("title") || "Título da biografia"}
-                  </h3>
-                  <Badge variant="secondary" className="mt-1">
-                    {watch("style") || "Estilo"}
-                  </Badge>
-                  {watch("isPublic") && (
-                    <Badge variant="default" className="mt-1 ml-2">
-                      Público
-                    </Badge>
-                  )}
-                </div>
-
-                <div className="text-sm text-muted-foreground">
-                  <Markdown>{watch("content")}</Markdown>
-                </div>
-
-                {fields.length > 0 && (
-                  <div className="space-y-2">
-                    <h4 className="font-medium text-sm">Links:</h4>
-                    {fields.map((field, index) => (
-                      <div
-                        key={field.id}
-                        className="text-xs text-muted-foreground"
-                      >
-                        {watch(`links.${index}.label`) || "Nome do link"}:{" "}
-                        {watch(`links.${index}.url`) || "URL"}
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {watch("publicUrl") && (
-                  <div className="text-xs text-muted-foreground">
-                    URL: {watch("publicUrl")}
-                  </div>
-                )}
+        <div className="space-y-6 sticky top-6 right-0 hidden lg:block">
+          <div className="flex justify-center">
+            <div className="relative w-[320px] h-[650px] rounded-[3rem] border-[8px] border-gray-900 bg-gray-900 shadow-2xl overflow-hidden ring-4 ring-gray-900/20">
+              {/* Notch Simples */}
+              <div className="absolute top-0 inset-x-0 h-6 bg-gray-900 rounded-b-3xl w-40 mx-auto z-50 flex justify-center items-center">
+                <div className="w-12 h-1.5 bg-gray-800 rounded-full"></div>
               </div>
-              <Separator className="my-4" />
-              <CardAction>
-                <div className="space-y-3">
-                  <Button
-                    type="button"
-                    onClick={handlePublish}
-                    className="w-full"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                        Publicando...
-                      </>
-                    ) : (
-                      <>
-                        <Globe className="mr-2 h-4 w-4" />
-                        Publicar Biografia
-                      </>
-                    )}
-                  </Button>
 
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={handleSave}
-                    className="w-full"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2" />
-                        Salvando...
-                      </>
-                    ) : (
-                      <>
-                        <Save className="mr-2 h-4 w-4" />
-                        Salvar Rascunho
-                      </>
-                    )}
-                  </Button>
+              {/* Conteúdo do Preview */}
+              <div className="w-full h-full overflow-y-auto bg-background [&_.min-h-screen]:min-h-full custom-scrollbar-hide relative pointer-events-none">
+                <div className="absolute inset-0 origin-top pointer-events-auto">
+                  <BioTemplate
+                    bio={{
+                      id: "preview-id",
+                      user: { id: user?.id || "u1", name: user?.name || "Você" },
+                      title: watch("title") || "Seu Título",
+                      content: watch("content") || "Sua biografia aparecerá aqui...",
+                      style: (watch("style") as any) || "profissional",
+                      template: watch("template") || "minimalista",
+                      links: watch("links") as any || [],
+                      publicUrl: watch("publicUrl") || "preview",
+                      isPublic: watch("isPublic") || false,
+                      views: 0,
+                      createdAt: new Date().toISOString(),
+                      updatedAt: new Date().toISOString(),
+                    }}
+                    isLoading={false}
+                    error={null}
+                    isPreview={true}
+                  />
                 </div>
-              </CardAction>
-            </CardContent>
-          </Card>
+              </div>
+            </div>
+          </div>
         </div>
       </form>
+      <UpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        featureName="Geração por Inteligência Artificial"
+        description="Assine um de nossos planos e libere o poder da IA avançada para criar biografias persuasivas em segundos."
+      />
     </div>
   );
 }

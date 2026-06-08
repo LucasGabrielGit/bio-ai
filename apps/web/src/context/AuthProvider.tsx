@@ -1,5 +1,6 @@
 
 import apiClient from '@/lib/api/client'
+import { URL_EXCEPTIONS } from '@/lib/utils/utils'
 import { useNavigate } from '@tanstack/react-router'
 import axios from 'axios'
 import React, { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
@@ -10,6 +11,7 @@ export interface User {
     email: string
     name: string
     plan: string
+    emailVerified?: boolean
 }
 
 export interface AuthContextType {
@@ -33,17 +35,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        const isPublicRoute = location.pathname.startsWith('/bio/') ||
-            location.pathname === '/' ||
-            location.pathname === '/login' ||
-            location.pathname.startsWith('/registro') ||
-            location.pathname.startsWith('/home') ||
-            location.pathname.startsWith('/sobre') ||
-            location.pathname.startsWith('/contato') ||
-            location.pathname.startsWith('/planos') ||
-            location.pathname.startsWith('/termos') ||
-            location.pathname.startsWith('/privacidade') ||
-            location.pathname.startsWith('/recuperar-senha')
+        const isPublicRoute = URL_EXCEPTIONS.some((route) => location.pathname.startsWith(route))
 
         if (isPublicRoute) {
             setIsLoading(false)
@@ -117,6 +109,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                     email: response.data.user.email,
                     name: response.data.user.name,
                     plan: response.data.user.plan,
+                    emailVerified: response.data.user.emailVerified,
                 })
                 toast.success('Login realizado com sucesso!')
 
